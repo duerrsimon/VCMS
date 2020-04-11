@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   id="Maximize"
+   viewBox="0 0 64 64"
+   width="512"
+   height="512"
+   version="1.1"
+   sodipodi:docname="enlarge.svg"
+   inkscape:version="0.92.1 r15371">
+  <metadata
+     id="metadata21">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs19" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="2560"
+     inkscape:window-height="1346"
+     id="namedview17"
+     showgrid="false"
+     inkscape:zoom="1.0443115"
+     inkscape:cx="-54.42163"
+     inkscape:cy="188.98645"
+     inkscape:window-x="-11"
+     inkscape:window-y="-11"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="Maximize" />
+  <path
+     d="M7,18a1,1,0,0,0,1-1V9.414L22.293,23.707a1,1,0,0,0,1.414-1.414L9.414,8H17a1,1,0,0,0,0-2H7A1,1,0,0,0,6,7V17A1,1,0,0,0,7,18Z"
+     id="path4"
+     style="fill:#eeeeec" />
+  <path
+     d="M41,24a1,1,0,0,0,.707-.293L56,9.414V17a1,1,0,0,0,2,0V7a1,1,0,0,0-1-1H47a1,1,0,0,0,0,2h7.586L40.293,22.293A1,1,0,0,0,41,24Z"
+     id="path6"
+     style="fill:#eeeeec" />
+  <path
+     d="M54.586,56H47a1,1,0,0,0,0,2H57a1,1,0,0,0,1-1V47a1,1,0,0,0-2,0v7.586L41.707,40.293a1,1,0,0,0-1.414,1.414Z"
+     id="path8"
+     style="fill:#eeeeec" />
+  <path
+     d="M6.618,57.923A1.01,1.01,0,0,0,7,58H17a1,1,0,0,0,0-2H9.414L23.707,41.707a1,1,0,0,0-1.414-1.414L8,54.586V47a1,1,0,0,0-2,0V57a1,1,0,0,0,.618.923Z"
+     id="path10"
+     style="fill:#eeeeec" />
+</svg>

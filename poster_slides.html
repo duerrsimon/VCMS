@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VCMS</title>
+    <link rel="stylesheet" href="fonts/inter.css">
+    <link rel="stylesheet" href="css/tailwind.min.css">
+    <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.0.1/dist/alpine.js" defer></script>
+    <script src="http://localhost/pwdemo/wire/modules/Jquery/JqueryCore/JqueryCore.js"></script>
+    <script src='http://localhost/pwdemo/wire/modules/Fieldtype/FieldtypeComments/comments.min.js'></script>
+</head>
+<body>
+    <div>
+      <nav x-data="{ open: false }" @keydown.window.escape="open = false" class="bg-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="flex items-center justify-between h-16">
+            <div class="flex items-center">
+              <div class="flex-shrink-0">
+                <img class="h-8 w-8" src="img/logo.svg" alt="VCMS logo" />
+              </div>
+              <div class="hidden md:block">
+                <div class="ml-10 flex items-baseline">
+                  <a href="index.html" class="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700">Home</a>
+                  <a href="schedule.html" class="ml-4 px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700">Schedule</a>
+                  <a href="speakers.html" class="ml-4 px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700">Speakers</a>
+                  <a href="posters.html" class="ml-4 px-3 py-2 rounded-md text-sm font-medium text-white bg-gray-900 focus:outline-none focus:text-white focus:bg-gray-700">Posters</a>
+                  <a href="faq.html" class="ml-4 px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700">FAQ</a>
+                  <a href="about.html" class="ml-4 px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700">About</a>
+
+                </div>
+              </div>
+           
+            </div>
+            <div class="hidden md:block">
+              <div class="ml-4 flex items-center md:ml-6">
+                  <div @click.away="open = false" class="ml-3 relative" x-data="{ open: false }">
+                      <div>
+                          <button @click="open = !open" class="p-1 border-2 border-transparent text-gray-400 rounded-full hover:text-white focus:outline-none focus:text-white focus:bg-gray-700" aria-label="Notifications" aria-haspopup="true" x-bind:aria-expanded="open">
+                              <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                              </svg>
+                            </button>
+                      </div>
+                      <div x-show="open" x-transition:enter="transition ease-out duration-100" x-transition:enter-start="transform opacity-0 scale-95" x-transition:enter-end="transform opacity-100 scale-100" x-transition:leave="transition ease-in duration-75" x-transition:leave-start="transform opacity-100 scale-100" x-transition:leave-end="transform opacity-0 scale-95" class="origin-top-right absolute right-0 mt-2 w-64 rounded-md shadow-lg">
+                        <div class="rounded-md bg-white shadow-xs">
+                          <!-- <p class="text-sm p-4">You have 0 comments</p> -->
+                          <div class="flex text-sm max-w-md bg-white shadow-lg  overflow-hidden">
+                              <div class="w-2 bg-green-500"></div>
+                              <div class="flex items-center px-2 py-3">
+                                 <div class="mx-3">
+                                  <h2 class="font-semibold text-gray-800">New Comment</h2>
+                                  <p class="text-gray-600">John Doe commented on your <a href="#" class="text-blue-500">Poster</a>.</p>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="flex text-sm max-w-md bg-white shadow-lg overflow-hidden">
+                              <div class="w-2 bg-blue-500"></div>
+                              <div class="flex items-center px-2 py-3">
+                                 <div class="mx-3">
+                                  <h2 class="font-semibold text-gray-800">New Like</h2>
+                                  <p class="text-gray-600">You have a new like on your <a href="#" class="text-blue-500">Poster</a>.</p>
+                                </div>
+                              </div>
+                            </div>
+                        </div>
+                      </div>
+                    </div>  
+               
+                <div @click.away="open = false" class="ml-3 relative" x-data="{ open: false }">
+                  <div>
+                    <button @click="open = !open" class="max-w-xs flex items-center text-sm rounded-full text-gray-400 rounded-full hover:text-white focus:outline-none focus:text-white" id="user-menu" aria-label="User menu" aria-haspopup="true" x-bind:aria-expanded="open">
+                     
+                      <svg class="svg-icon h-6 w-6 stroke-1 stroke-current" viewBox="0 0 20 20">
+                        <path fill="none" d="M10,10.9c2.373,0,4.303-1.932,4.303-4.306c0-2.372-1.93-4.302-4.303-4.302S5.696,4.223,5.696,6.594C5.696,8.969,7.627,10.9,10,10.9z M10,3.331c1.801,0,3.266,1.463,3.266,3.263c0,1.802-1.465,3.267-3.266,3.267c-1.8,0-3.265-1.465-3.265-3.267C6.735,4.794,8.2,3.331,10,3.331z"></path>
+                        <path fill="none" d="M10,12.503c-4.418,0-7.878,2.058-7.878,4.685c0,0.288,0.231,0.52,0.52,0.52c0.287,0,0.519-0.231,0.519-0.52c0-1.976,3.132-3.646,6.84-3.646c3.707,0,6.838,1.671,6.838,3.646c0,0.288,0.234,0.52,0.521,0.52s0.52-0.231,0.52-0.52C17.879,14.561,14.418,12.503,10,12.503z"></path>
+                      </svg>
+                    </button>
+                  </div>
+                  <div x-show="open" x-transition:enter="transition ease-out duration-100" x-transition:enter-start="transform opacity-0 scale-95" x-transition:enter-end="transform opacity-100 scale-100" x-transition:leave="transition ease-in duration-75" x-transition:leave-start="transform opacity-100 scale-100" x-transition:leave-end="transform opacity-0 scale-95" class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg">
+                    <div class="py-1 rounded-md bg-white shadow-xs">
+                      <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Your Profile</a>
+                      <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Submissions</a>
+                      <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Sign out</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="-mr-2 flex md:hidden">
+              <button @click="open = !open" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:bg-gray-700 focus:text-white" x-bind:aria-label="open ? 'Close main menu' : 'Main menu'" x-bind:aria-expanded="open">
+                <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                  <path :class="{'hidden': open, 'inline-flex': !open }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                  <path :class="{'hidden': !open, 'inline-flex': open }" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div :class="{'block': open, 'hidden': !open}" class="hidden md:hidden">
+          <div class="px-2 pt-2 pb-3 sm:px-3">
+            <a href="index.html" class="block px-3 py-2 rounded-md text-base font-medium text-white bg-gray-900 focus:outline-none focus:text-white focus:bg-gray-700">Home</a>
+            <a href="schedule.html" class="mt-1 block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700">Schedule</a>
+            <a href="speakers.html" class="mt-1 block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700">Speakers</a>
+            <a href="posters.html" class="mt-1 block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700">Posters</a>
+            <a href="faq.html" class="mt-1 block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700">FAQ</a>
+            <a href="about.html" class="mt-1 block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700">About</a>
+          </div>
+          <div class="pt-4 pb-3 border-t border-gray-700">
+            <div class="flex items-center px-5">
+              <div class="flex-shrink-0">
+                <svg class="svg-icon h-10 w-10 stroke-1 stroke-current text-cool-gray-100" viewBox="0 0 20 20">
+                  <path fill="none" d="M10,10.9c2.373,0,4.303-1.932,4.303-4.306c0-2.372-1.93-4.302-4.303-4.302S5.696,4.223,5.696,6.594C5.696,8.969,7.627,10.9,10,10.9z M10,3.331c1.801,0,3.266,1.463,3.266,3.263c0,1.802-1.465,3.267-3.266,3.267c-1.8,0-3.265-1.465-3.265-3.267C6.735,4.794,8.2,3.331,10,3.331z"></path>
+                  <path fill="none" d="M10,12.503c-4.418,0-7.878,2.058-7.878,4.685c0,0.288,0.231,0.52,0.52,0.52c0.287,0,0.519-0.231,0.519-0.52c0-1.976,3.132-3.646,6.84-3.646c3.707,0,6.838,1.671,6.838,3.646c0,0.288,0.234,0.52,0.521,0.52s0.52-0.231,0.52-0.52C17.879,14.561,14.418,12.503,10,12.503z"></path>
+                </svg>
+              </div>
+              <div class="ml-3">
+                <div class="text-base font-medium leading-none text-white">John Doe</div>
+                <div class="mt-1 text-sm font-medium leading-none text-gray-400">doe@openuni.com</div>
+              </div>
+            </div>
+            <div class="mt-3 px-2" role="menu" aria-orientation="vertical" aria-labelledby="user-menu" role="menuitem">
+              <a href="#" class="block px-3 py-2 rounded-md text-base font-medium text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700" role="menuitem">Your Profile</a>
+              <a href="#" class="mt-1 block px-3 py-2 rounded-md text-base font-medium text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700" role="menuitem">Submissions</a>
+              <a href="#" class="mt-1 block px-3 py-2 rounded-md text-base font-medium text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700" role="menuitem">Sign out</a>
+            </div>
+          </div>
+        </div>
+      </nav>
+      <header class="bg-white">
+        <div class="max-w-7xl mx-auto pt-4 px-4 sm:px-6 lg:px-8">
+          <h1 class="text-xl font-bold leading-tight text-gray-900">
+            Virtual Poster Session
+          </h1>
+          <nav class="text-black font-bold mt-1" aria-label="Breadcrumb">
+            <ol class="list-none p-0 inline-flex">
+              <li class="flex items-center">
+                <a href="#" class="text-red-800">Posters </a>
+                <svg class="fill-current w-3 h-3 mx-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"/></svg>
+              </li>
+              <li>
+                <a href="#" class="text-gray-500" aria-current="page">Experimental</a>
+              </li>
+            </ol>
+          </nav>
+        </div>
+      </header>
+    </div>
+        <main>
+            <div class="bg-gray-200 mt-4 pb-8">
+              <div class="mx-auto pt-4 sm:px-6 lg:px-8 flex items-center justify-center flex-no-wrap align-top">
+                <div class="flex-initial">
+                  <a href="poster_pdf.html" aria-label="Previous Poster" title="Previous Poster">
+                  <svg class="w-8 h-8 inline-block stroke-current text-gray-700 hover:text-cool-gray-400" viewBox="0 0 20 20">
+                    <path d="M18.271,9.212H3.615l4.184-4.184c0.306-0.306,0.306-0.801,0-1.107c-0.306-0.306-0.801-0.306-1.107,0
+                    L1.21,9.403C1.194,9.417,1.174,9.421,1.158,9.437c-0.181,0.181-0.242,0.425-0.209,0.66c0.005,0.038,0.012,0.071,0.022,0.109
+                    c0.028,0.098,0.075,0.188,0.142,0.271c0.021,0.026,0.021,0.061,0.045,0.085c0.015,0.016,0.034,0.02,0.05,0.033l5.484,5.483
+                    c0.306,0.307,0.801,0.307,1.107,0c0.306-0.305,0.306-0.801,0-1.105l-4.184-4.185h14.656c0.436,0,0.788-0.353,0.788-0.788
+                    S18.707,9.212,18.271,9.212z"></path>
+                  </svg>
+                
+                  </a>
+                </div>
+                <div class="px-4 flex-initial">
+                  <a href="posters.html" aria-label="Link back to Poster overview" title="Back to Poster overview">
+                    <?xml version="1.0" encoding="UTF-8"?>
+                    <svg class="w-8 h-8 text-gray-700 hover:text-cool-gray-400 fill-current" version="1.1" viewBox="0 0 19.003 17.309" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+
+                    <g transform="translate(-28.15 -124.87)">
+                    <g transform="matrix(1.8245 0 0 1.8245 -130.71 -633.37)"  aria-label="V">
+                    <circle cx="96.228" cy="416.85" r="1.2573" stroke-width="0" style="paint-order:fill markers stroke"/>
+                    <circle cx="96.228" cy="423.82" r="1.2573" style="paint-order:fill markers stroke"/>
+                    <circle cx="96.228" cy="420.34" r="1.2573" style="paint-order:fill markers stroke"/>
+                    <circle transform="translate(-6.1662e-7 3.0831e-6)" cx="88.327" cy="423.82" r="1.2573" style="paint-order:fill markers stroke"/>
+                    <circle cx="88.327" cy="416.85" r="1.2573" stroke-width="0" style="paint-order:fill markers stroke"/>
+                    <circle cx="88.327" cy="420.34" r="1.2573" stroke-width="0" style="paint-order:fill markers stroke"/>
+                    <g transform="translate(.055047)">
+                    <circle transform="translate(-6.1662e-7 3.0831e-6)" cx="92.223" cy="416.85" r="1.2573" stroke-width="0" style="paint-order:fill markers stroke"/>
+                    <circle cx="92.223" cy="423.82" r="1.2573" style="paint-order:fill markers stroke"/>
+                    <circle cx="92.223" cy="420.34" r="1.2573" style="paint-order:fill markers stroke"/>
+                    </g>
+                    </g>
+                    </g>
+                    </svg>
+                   
+                </div>
+                <div class="">
+                  <a href="poster_single.html" aria-label="Next Poster" title="Next Poster">
+                  <svg class="w-8 h-8 inline-block fill-current stroke-current text-gray-700 hover:text-cool-gray-400" viewBox="0 0 20 20">
+                    <path  d="M1.729,9.212h14.656l-4.184-4.184c-0.307-0.306-0.307-0.801,0-1.107c0.305-0.306,0.801-0.306,1.106,0
+                    l5.481,5.482c0.018,0.014,0.037,0.019,0.053,0.034c0.181,0.181,0.242,0.425,0.209,0.66c-0.004,0.038-0.012,0.071-0.021,0.109
+                    c-0.028,0.098-0.075,0.188-0.143,0.271c-0.021,0.026-0.021,0.061-0.045,0.085c-0.015,0.016-0.034,0.02-0.051,0.033l-5.483,5.483
+                    c-0.306,0.307-0.802,0.307-1.106,0c-0.307-0.305-0.307-0.801,0-1.105l4.184-4.185H1.729c-0.436,0-0.788-0.353-0.788-0.788
+                    S1.293,9.212,1.729,9.212z"></path>
+                  </svg>
+                </a>
+                </div>
+              </div>
+              <div class="mx-auto pb-6 sm:px-6 lg:px-8 flex flex-grow-0 flex-no-wrap align-top">
+         
+                <div class=" mx-auto px-4 sm:px-8 flex-grow-0">
+                    <div class="py-4">
+                                        
+                        <div class="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 ">
+                            <div class=" shadow rounded-lg">
+                                
+                                <div class="bg-white border flex  flex-wrap sm:flex-no-wrap align-top flex-grow-0">
+                                   <div class="w-full sm:w-2/3 relative h-auto ">
+                                    <div class=" sticky top-2">
+                                        <div class=" video-responsive">
+                                            <iframe src="https://docs.google.com/presentation/d/e/2PACX-1vTnd71f-6edutb_oLL6qBRLyla2QGN_2_AG_5En0DSI0wo8pZGFC0I53dGJw-WmVg/embed?start=false&loop=false&delayms=3000" frameborder="0" width="1027" height="600" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe></div>
+                                 </div>
+                              
+                                    </div>
+                                   <div class="w-full sm:w-1/3  py-5 border-gray-300 border-l">
+
+                                    <h2 class="font-bold text-cool-gray-700 text-xl px-5">
+                                      Slideshows Might Be More Effective Than Traditional Overloaded Posters
+                                    </h2>
+                                    <div class="text-base mt-2 flex flex-wrap flex-grow-0 px-5">
+                                        <div @click.away="open = false" class="relative " x-data="{ open: false }">
+                                            <div>
+                                                <button @click="open = !open" class="text-cool-gray-600 rounded-full underline hover:text-cool-gray-700 focus:outline-none focus:text-cool-gray-700" aria-label="Notifications" aria-haspopup="true" x-bind:aria-expanded="open">
+                                                   Ted Mosby, 
+                                                  </button>
+                                                  
+                                            </div>
+                                            <div x-show="open" 
+                                            x-transition:enter="transition ease-out duration-100"
+                                             x-transition:enter-start="transform opacity-0 scale-95" 
+                                             x-transition:enter-end="transform opacity-100 scale-100" 
+                                             x-transition:leave="transition ease-in duration-75" 
+                                             x-transition:leave-start="transform opacity-100 scale-100" 
+                                             x-transition:leave-end="transform opacity-0 scale-95" 
+                                             class="origin-top-left absolute left-0 mt-2 w-64 rounded-md shadow-xl">
+                                              <div class="p-4 rounded-md bg-cool-gray-50 border border-cool-gray-200 shadow-xs">
+                                                <div class="flex content-center items-center">
+                                                    <img src="img/orcid.svg" class="h-4 w-4 mr-2" alt="ORCID icon">
+                                                     <a href="https://orcid.org/0000-0002-4304-8106" class="flex-1">0000-0001-1234-5678</a> 
+                                                </div>
+                                                <div  class="flex content-center items-center">
+                                                    <svg class="w-4 h-4 mr-2 stroke-current text-cool-gray-500 fill-current" viewBox="0 0 20 20">
+                                                        
+							<path fill="none" d="M10,2.531c-4.125,0-7.469,3.344-7.469,7.469c0,4.125,3.344,7.469,7.469,7.469c4.125,0,7.469-3.344,7.469-7.469C17.469,5.875,14.125,2.531,10,2.531 M10,3.776c1.48,0,2.84,0.519,3.908,1.384c-1.009,0.811-2.111,1.512-3.298,2.066C9.914,6.072,9.077,5.017,8.14,4.059C8.728,3.876,9.352,3.776,10,3.776 M6.903,4.606c0.962,0.93,1.82,1.969,2.53,3.112C7.707,8.364,5.849,8.734,3.902,8.75C4.264,6.976,5.382,5.481,6.903,4.606 M3.776,10c2.219,0,4.338-0.418,6.29-1.175c0.209,0.404,0.405,0.813,0.579,1.236c-2.147,0.805-3.953,2.294-5.177,4.195C4.421,13.143,3.776,11.648,3.776,10 M10,16.224c-1.337,0-2.572-0.426-3.586-1.143c1.079-1.748,2.709-3.119,4.659-3.853c0.483,1.488,0.755,3.071,0.784,4.714C11.271,16.125,10.646,16.224,10,16.224 M13.075,15.407c-0.072-1.577-0.342-3.103-0.806-4.542c0.673-0.154,1.369-0.243,2.087-0.243c0.621,0,1.22,0.085,1.807,0.203C15.902,12.791,14.728,14.465,13.075,15.407 M14.356,9.378c-0.868,0-1.708,0.116-2.515,0.313c-0.188-0.464-0.396-0.917-0.621-1.359c1.294-0.612,2.492-1.387,3.587-2.284c0.798,0.97,1.302,2.187,1.395,3.517C15.602,9.455,14.99,9.378,14.356,9.378"></path> </svg>
+                                                       <a href="https://github.com/duerrsimon" class="flex-1">tedmosby</a> 
+                                                    </div>
+                                                    <div class="flex content-center items-center">
+                                                        <svg class="w-4 h-4 mr-2 stroke-current text-blue-500 fill-current" viewBox="0 0 20 20">
+                                                            <path fill="none" d="M18.258,3.266c-0.693,0.405-1.46,0.698-2.277,0.857c-0.653-0.686-1.586-1.115-2.618-1.115c-1.98,0-3.586,1.581-3.586,3.53c0,0.276,0.031,0.545,0.092,0.805C6.888,7.195,4.245,5.79,2.476,3.654C2.167,4.176,1.99,4.781,1.99,5.429c0,1.224,0.633,2.305,1.596,2.938C2.999,8.349,2.445,8.19,1.961,7.925C1.96,7.94,1.96,7.954,1.96,7.97c0,1.71,1.237,3.138,2.877,3.462c-0.301,0.08-0.617,0.123-0.945,0.123c-0.23,0-0.456-0.021-0.674-0.062c0.456,1.402,1.781,2.422,3.35,2.451c-1.228,0.947-2.773,1.512-4.454,1.512c-0.291,0-0.575-0.016-0.855-0.049c1.588,1,3.473,1.586,5.498,1.586c6.598,0,10.205-5.379,10.205-10.045c0-0.153-0.003-0.305-0.01-0.456c0.7-0.499,1.308-1.12,1.789-1.827c-0.644,0.28-1.334,0.469-2.06,0.555C17.422,4.782,17.99,4.091,18.258,3.266"></path>
+                                                        </svg>
+                                                       <a href="https://twitter.com/tedmosby" class="flex-1">tedmosby</a><br> 
+                                                    </div>
+                                                       <p class="mt-2"> Open University </p>
+                                                    
+                                              </div>
+                                            </div>
+                                          </div> 
+                                          <div @click.away="open = false" class="relative " x-data="{ open: false }">
+                                            <div>
+                                                <button @click="open = !open" class="text-cool-gray-600 rounded-full  hover:text-cool-gray-700 focus:outline-none focus:text-cool-gray-700" aria-label="Notifications" aria-haspopup="true" x-bind:aria-expanded="open">
+                                                   &nbsp;Marshall Eriksen,
+                                                  </button>
+                                            </div>
+                                            <div x-show="open" 
+                                            x-transition:enter="transition ease-out duration-100"
+                                             x-transition:enter-start="transform opacity-0 scale-95" 
+                                             x-transition:enter-end="transform opacity-100 scale-100" 
+                                             x-transition:leave="transition ease-in duration-75" 
+                                             x-transition:leave-start="transform opacity-100 scale-100" 
+                                             x-transition:leave-end="transform opacity-0 scale-95" 
+                                             class="origin-top-left absolute left-0 mt-2 w-64 rounded-md shadow-xl">
+                                              <div class="p-4 rounded-md bg-cool-gray-50 border border-cool-gray-200 shadow-xs">
+                                                <div class="flex content-center items-center">
+                                                    <img src="img/orcid.svg" class="h-4 w-4 mr-2" alt="ORCID icon">
+                                                     <a href="https://orcid.org/0000-0002-4304-8106" class="flex-1">0000-0001-1234-5678</a> 
+                                                </div>
+                                                <div  class="flex content-center items-center">
+                                                    <svg class="w-4 h-4 mr-2 stroke-current text-cool-gray-500 fill-current" viewBox="0 0 20 20">
+                                                        
+							<path fill="none" d="M10,2.531c-4.125,0-7.469,3.344-7.469,7.469c0,4.125,3.344,7.469,7.469,7.469c4.125,0,7.469-3.344,7.469-7.469C17.469,5.875,14.125,2.531,10,2.531 M10,3.776c1.48,0,2.84,0.519,3.908,1.384c-1.009,0.811-2.111,1.512-3.298,2.066C9.914,6.072,9.077,5.017,8.14,4.059C8.728,3.876,9.352,3.776,10,3.776 M6.903,4.606c0.962,0.93,1.82,1.969,2.53,3.112C7.707,8.364,5.849,8.734,3.902,8.75C4.264,6.976,5.382,5.481,6.903,4.606 M3.776,10c2.219,0,4.338-0.418,6.29-1.175c0.209,0.404,0.405,0.813,0.579,1.236c-2.147,0.805-3.953,2.294-5.177,4.195C4.421,13.143,3.776,11.648,3.776,10 M10,16.224c-1.337,0-2.572-0.426-3.586-1.143c1.079-1.748,2.709-3.119,4.659-3.853c0.483,1.488,0.755,3.071,0.784,4.714C11.271,16.125,10.646,16.224,10,16.224 M13.075,15.407c-0.072-1.577-0.342-3.103-0.806-4.542c0.673-0.154,1.369-0.243,2.087-0.243c0.621,0,1.22,0.085,1.807,0.203C15.902,12.791,14.728,14.465,13.075,15.407 M14.356,9.378c-0.868,0-1.708,0.116-2.515,0.313c-0.188-0.464-0.396-0.917-0.621-1.359c1.294-0.612,2.492-1.387,3.587-2.284c0.798,0.97,1.302,2.187,1.395,3.517C15.602,9.455,14.99,9.378,14.356,9.378"></path> </svg>
+                                                       <a href="https://github.com/duerrsimon" class="flex-1">eriksen_marsh</a> 
+                                                    </div>
+                                                    <div class="flex content-center items-center">
+                                                        <svg class="w-4 h-4 mr-2 stroke-current text-blue-500 fill-current" viewBox="0 0 20 20">
+                                                            <path  d="M18.258,3.266c-0.693,0.405-1.46,0.698-2.277,0.857c-0.653-0.686-1.586-1.115-2.618-1.115c-1.98,0-3.586,1.581-3.586,3.53c0,0.276,0.031,0.545,0.092,0.805C6.888,7.195,4.245,5.79,2.476,3.654C2.167,4.176,1.99,4.781,1.99,5.429c0,1.224,0.633,2.305,1.596,2.938C2.999,8.349,2.445,8.19,1.961,7.925C1.96,7.94,1.96,7.954,1.96,7.97c0,1.71,1.237,3.138,2.877,3.462c-0.301,0.08-0.617,0.123-0.945,0.123c-0.23,0-0.456-0.021-0.674-0.062c0.456,1.402,1.781,2.422,3.35,2.451c-1.228,0.947-2.773,1.512-4.454,1.512c-0.291,0-0.575-0.016-0.855-0.049c1.588,1,3.473,1.586,5.498,1.586c6.598,0,10.205-5.379,10.205-10.045c0-0.153-0.003-0.305-0.01-0.456c0.7-0.499,1.308-1.12,1.789-1.827c-0.644,0.28-1.334,0.469-2.06,0.555C17.422,4.782,17.99,4.091,18.258,3.266"></path>
+                                                        </svg>
+                                                       <a href="https://twitter.com/tedmosby" class="flex-1">eriksen</a><br> 
+                                                    </div>
+                                                       <p class="mt-2"> GNB National Bank, McClarens Pub</p>
+                                                    
+                                              </div>
+                                            </div>
+                                          </div> 
+                                          <div @click.away="open = false" class="relative mx-1" x-data="{ open: false }">
+                                            <div>
+                                                <button @click="open = !open" class="text-cool-gray-600 rounded-full hover:text-cool-gray-700 focus:outline-none focus:text-cool-gray-700" aria-label="Notifications" aria-haspopup="true" x-bind:aria-expanded="open">
+                                                    Alyson Hannigan
+                                                  </button>
+                                            </div>
+                                            <div x-show="open" 
+                                            x-transition:enter="transition ease-out duration-100"
+                                             x-transition:enter-start="transform opacity-0 scale-95" 
+                                             x-transition:enter-end="transform opacity-100 scale-100" 
+                                             x-transition:leave="transition ease-in duration-75" 
+                                             x-transition:leave-start="transform opacity-100 scale-100" 
+                                             x-transition:leave-end="transform opacity-0 scale-95" 
+                                             class="origin-top-left absolute left-0 mt-2 w-64 rounded-md shadow-xl">
+                                              <div class="p-4 rounded-md bg-cool-gray-50 border border-cool-gray-200 shadow-xs">
+                                                <div class="flex content-center items-center">
+                                                    <img src="img/orcid.svg" class="h-4 w-4 mr-2" alt="ORCID icon">
+                                                     <a href="https://orcid.org/0000-0002-4304-8106" class="flex-1">0000-0001-1234-5678</a> 
+                                                </div>
+                                                <div  class="flex content-center items-center">
+                                                    <svg class="w-4 h-4 mr-2 stroke-current text-cool-gray-500 fill-current" viewBox="0 0 20 20">
+                                                        
+							<path fill="none" d="M10,2.531c-4.125,0-7.469,3.344-7.469,7.469c0,4.125,3.344,7.469,7.469,7.469c4.125,0,7.469-3.344,7.469-7.469C17.469,5.875,14.125,2.531,10,2.531 M10,3.776c1.48,0,2.84,0.519,3.908,1.384c-1.009,0.811-2.111,1.512-3.298,2.066C9.914,6.072,9.077,5.017,8.14,4.059C8.728,3.876,9.352,3.776,10,3.776 M6.903,4.606c0.962,0.93,1.82,1.969,2.53,3.112C7.707,8.364,5.849,8.734,3.902,8.75C4.264,6.976,5.382,5.481,6.903,4.606 M3.776,10c2.219,0,4.338-0.418,6.29-1.175c0.209,0.404,0.405,0.813,0.579,1.236c-2.147,0.805-3.953,2.294-5.177,4.195C4.421,13.143,3.776,11.648,3.776,10 M10,16.224c-1.337,0-2.572-0.426-3.586-1.143c1.079-1.748,2.709-3.119,4.659-3.853c0.483,1.488,0.755,3.071,0.784,4.714C11.271,16.125,10.646,16.224,10,16.224 M13.075,15.407c-0.072-1.577-0.342-3.103-0.806-4.542c0.673-0.154,1.369-0.243,2.087-0.243c0.621,0,1.22,0.085,1.807,0.203C15.902,12.791,14.728,14.465,13.075,15.407 M14.356,9.378c-0.868,0-1.708,0.116-2.515,0.313c-0.188-0.464-0.396-0.917-0.621-1.359c1.294-0.612,2.492-1.387,3.587-2.284c0.798,0.97,1.302,2.187,1.395,3.517C15.602,9.455,14.99,9.378,14.356,9.378"></path> </svg>
+                                                       <a href="https://github.com/duerrsimon" class="flex-1">alyson_hanigan</a> 
+                                                    </div>
+                                                    <div class="flex content-center items-center">
+                                                        <svg class="w-4 h-4 mr-2 stroke-current text-blue-500 fill-current" viewBox="0 0 20 20">
+                                                            <path  d="M18.258,3.266c-0.693,0.405-1.46,0.698-2.277,0.857c-0.653-0.686-1.586-1.115-2.618-1.115c-1.98,0-3.586,1.581-3.586,3.53c0,0.276,0.031,0.545,0.092,0.805C6.888,7.195,4.245,5.79,2.476,3.654C2.167,4.176,1.99,4.781,1.99,5.429c0,1.224,0.633,2.305,1.596,2.938C2.999,8.349,2.445,8.19,1.961,7.925C1.96,7.94,1.96,7.954,1.96,7.97c0,1.71,1.237,3.138,2.877,3.462c-0.301,0.08-0.617,0.123-0.945,0.123c-0.23,0-0.456-0.021-0.674-0.062c0.456,1.402,1.781,2.422,3.35,2.451c-1.228,0.947-2.773,1.512-4.454,1.512c-0.291,0-0.575-0.016-0.855-0.049c1.588,1,3.473,1.586,5.498,1.586c6.598,0,10.205-5.379,10.205-10.045c0-0.153-0.003-0.305-0.01-0.456c0.7-0.499,1.308-1.12,1.789-1.827c-0.644,0.28-1.334,0.469-2.06,0.555C17.422,4.782,17.99,4.091,18.258,3.266"></path>
+                                                        </svg>
+                                                       <a href="https://twitter.com/tedmosby" class="flex-1">alyson_hanigan</a><br> 
+                                                    </div>
+                                                       <p class="mt-2"> McLarens Bar </p>
+                                                    
+                                              </div>
+                                            </div>
+                                          </div>  
+                                     </div>
+                                    <h5 class="font-bold text-cool-gray-500 text-sm mt-4 px-5"> Abstract</h5>
+                                    <p class="text-sm px-5">                                   
+                                        Interactive PowerPoint or Google Slides presentations are entirely possible to embed in a website and allow a quick and user-friendly presentation of ones research even without coding.  This format with 16:9 slide format is also twitter friendly such as demonstrated by the Photonics Online Meetup. 
+
+                                    </p>
+                                    <h5 class="font-bold text-cool-gray-500 text-sm mt-4 px-5"> Metadata</h5>
+                                    <div class="flex flex-no-wrap items-center px-5 text-sm">
+                                      <div>
+                                        <span class="pr-1 font-medium text-xs">DOI</span>
+                                        <a class=" text-blue-800 hover:text-gray-500" href="">  
+                                          10/1023.zenodo.1322                                 
+                                        </a>
+                                      </div>
+                                      <div class="pl-2 flex items-center">
+                                        
+                                          <svg class="w-4 h-4 inline-block mr-2 stroke-current text-blue-500 fill-current" viewBox="0 0 20 20">
+                                            <path  d="M18.258,3.266c-0.693,0.405-1.46,0.698-2.277,0.857c-0.653-0.686-1.586-1.115-2.618-1.115c-1.98,0-3.586,1.581-3.586,3.53c0,0.276,0.031,0.545,0.092,0.805C6.888,7.195,4.245,5.79,2.476,3.654C2.167,4.176,1.99,4.781,1.99,5.429c0,1.224,0.633,2.305,1.596,2.938C2.999,8.349,2.445,8.19,1.961,7.925C1.96,7.94,1.96,7.954,1.96,7.97c0,1.71,1.237,3.138,2.877,3.462c-0.301,0.08-0.617,0.123-0.945,0.123c-0.23,0-0.456-0.021-0.674-0.062c0.456,1.402,1.781,2.422,3.35,2.451c-1.228,0.947-2.773,1.512-4.454,1.512c-0.291,0-0.575-0.016-0.855-0.049c1.588,1,3.473,1.586,5.498,1.586c6.598,0,10.205-5.379,10.205-10.045c0-0.153-0.003-0.305-0.01-0.456c0.7-0.499,1.308-1.12,1.789-1.827c-0.644,0.28-1.334,0.469-2.06,0.555C17.422,4.782,17.99,4.091,18.258,3.266"></path>
+                                        </svg>
+                                        <a class=" text-blue-800 hover:text-gray-500" href="">  
+                                          t.co/12319020                               
+                                        </a>
+                                      </div>
+                                      <div class="pl-2 flex items-center">
+                                        
+                                        <svg class="w-4 h-4 inline-block mr-2 stroke-current text-gray-800" viewBox="0 0 20 20">
+                                         <path fill="none" d="M16.254,3.399h-0.695V3.052c0-0.576-0.467-1.042-1.041-1.042c-0.576,0-1.043,0.467-1.043,1.042v0.347H6.526V3.052c0-0.576-0.467-1.042-1.042-1.042S4.441,2.476,4.441,3.052v0.347H3.747c-0.768,0-1.39,0.622-1.39,1.39v11.813c0,0.768,0.622,1.39,1.39,1.39h12.507c0.768,0,1.391-0.622,1.391-1.39V4.789C17.645,4.021,17.021,3.399,16.254,3.399z M14.17,3.052c0-0.192,0.154-0.348,0.348-0.348c0.191,0,0.348,0.156,0.348,0.348v0.347H14.17V3.052z M5.136,3.052c0-0.192,0.156-0.348,0.348-0.348S5.831,2.86,5.831,3.052v0.347H5.136V3.052z M16.949,16.602c0,0.384-0.311,0.694-0.695,0.694H3.747c-0.384,0-0.695-0.311-0.695-0.694V7.568h13.897V16.602z M16.949,6.874H3.052V4.789c0-0.383,0.311-0.695,0.695-0.695h12.507c0.385,0,0.695,0.312,0.695,0.695V6.874z M5.484,11.737c0.576,0,1.042-0.467,1.042-1.042c0-0.576-0.467-1.043-1.042-1.043s-1.042,0.467-1.042,1.043C4.441,11.271,4.908,11.737,5.484,11.737z M5.484,10.348c0.192,0,0.347,0.155,0.347,0.348c0,0.191-0.155,0.348-0.347,0.348s-0.348-0.156-0.348-0.348C5.136,10.503,5.292,10.348,5.484,10.348z M14.518,11.737c0.574,0,1.041-0.467,1.041-1.042c0-0.576-0.467-1.043-1.041-1.043c-0.576,0-1.043,0.467-1.043,1.043C13.475,11.271,13.941,11.737,14.518,11.737z M14.518,10.348c0.191,0,0.348,0.155,0.348,0.348c0,0.191-0.156,0.348-0.348,0.348c-0.193,0-0.348-0.156-0.348-0.348C14.17,10.503,14.324,10.348,14.518,10.348z M14.518,15.212c0.574,0,1.041-0.467,1.041-1.043c0-0.575-0.467-1.042-1.041-1.042c-0.576,0-1.043,0.467-1.043,1.042C13.475,14.745,13.941,15.212,14.518,15.212z M14.518,13.822c0.191,0,0.348,0.155,0.348,0.347c0,0.192-0.156,0.348-0.348,0.348c-0.193,0-0.348-0.155-0.348-0.348C14.17,13.978,14.324,13.822,14.518,13.822z M10,15.212c0.575,0,1.042-0.467,1.042-1.043c0-0.575-0.467-1.042-1.042-1.042c-0.576,0-1.042,0.467-1.042,1.042C8.958,14.745,9.425,15.212,10,15.212z M10,13.822c0.192,0,0.348,0.155,0.348,0.347c0,0.192-0.156,0.348-0.348,0.348s-0.348-0.155-0.348-0.348C9.653,13.978,9.809,13.822,10,13.822z M5.484,15.212c0.576,0,1.042-0.467,1.042-1.043c0-0.575-0.467-1.042-1.042-1.042s-1.042,0.467-1.042,1.042C4.441,14.745,4.908,15.212,5.484,15.212z M5.484,13.822c0.192,0,0.347,0.155,0.347,0.347c0,0.192-0.155,0.348-0.347,0.348s-0.348-0.155-0.348-0.348C5.136,13.978,5.292,13.822,5.484,13.822z M10,11.737c0.575,0,1.042-0.467,1.042-1.042c0-0.576-0.467-1.043-1.042-1.043c-0.576,0-1.042,0.467-1.042,1.043C8.958,11.271,9.425,11.737,10,11.737z M10,10.348c0.192,0,0.348,0.155,0.348,0.348c0,0.191-0.156,0.348-0.348,0.348s-0.348-0.156-0.348-0.348C9.653,10.503,9.809,10.348,10,10.348z"></path>
+                                      </svg>
+                                     <span >15.06.2019</span>
+                                      </div>
+                                    </div>
+                                    <div class="px-4 py-5 border-b border-gray-200 sm:px-6 flex items-center">
+                                        <h3 class="flex-1 text-lg leading-6 font-medium text-gray-900">
+                                          Comments
+                                        </h3>
+                                        <div class="block flex-1 w-full mx-auto flex items-center">
+                                            <a class="text-cool-gray-600 hover:text-red-600 inline mr-2" href=""><svg class="w-8 h-8 ml-6 stroke-current" viewBox="0 0 20 20">
+                                                <path d="M9.719,17.073l-6.562-6.51c-0.27-0.268-0.504-0.567-0.696-0.888C1.385,7.89,1.67,5.613,3.155,4.14c0.864-0.856,2.012-1.329,3.233-1.329c1.924,0,3.115,1.12,3.612,1.752c0.499-0.634,1.689-1.752,3.612-1.752c1.221,0,2.369,0.472,3.233,1.329c1.484,1.473,1.771,3.75,0.693,5.537c-0.19,0.32-0.425,0.618-0.695,0.887l-6.562,6.51C10.125,17.229,9.875,17.229,9.719,17.073 M6.388,3.61C5.379,3.61,4.431,4,3.717,4.707C2.495,5.92,2.259,7.794,3.145,9.265c0.158,0.265,0.351,0.51,0.574,0.731L10,16.228l6.281-6.232c0.224-0.221,0.416-0.466,0.573-0.729c0.887-1.472,0.651-3.346-0.571-4.56C15.57,4,14.621,3.61,13.612,3.61c-1.43,0-2.639,0.786-3.268,1.863c-0.154,0.264-0.536,0.264-0.69,0C9.029,4.397,7.82,3.61,6.388,3.61"></path>
+                                            </svg></a><span>10 Votes</span></div>
+                                    </div>
+
+                                    <div class="p-4">
+                                        <ul class='CommentList CommentListThread'>
+                                            <li id='Comment6' class='CommentListItem CommentHasReplies' data-comment='6'>
+                                              <p class='CommentHeader'><span class='CommentCite'>Lasse Mundzu</span> <small class='CommentCreated'>2 hours ago</small> <span class='CommentVotes'><a class='CommentActionUpvote' title='Like this comment' data-url='/pwdemo/blog/phase-data-extended-transaction/?comment_success=upvote&amp;comment_id=6&amp;field_id=99#Comment6' href='#Comment6'>&uarr;<small class='CommentUpvoteCnt'>1</small></a></span> </p>
+                                              <div class='CommentText'>
+                                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. </p>
+                                              </div>
+                                              <div class='CommentFooter'>
+                                                <p class='CommentAction'>
+                                                  <a class='CommentActionReply' data-comment-id='6' href='#Comment6'>
+                                                    <svg class="svg-icon w-4 h-4 inline" viewBox="0 0 20 20">
+                                                      <path d="M3.24,7.51c-0.146,0.142-0.146,0.381,0,0.523l5.199,5.193c0.234,0.238,0.633,0.064,0.633-0.262v-2.634c0.105-0.007,0.212-0.011,0.321-0.011c2.373,0,4.302,1.91,4.302,4.258c0,0.957-0.33,1.809-1.008,2.602c-0.259,0.307,0.084,0.762,0.451,0.572c2.336-1.195,3.73-3.408,3.73-5.924c0-3.741-3.103-6.783-6.916-6.783c-0.307,0-0.615,0.028-0.881,0.063V2.575c0-0.327-0.398-0.5-0.633-0.261L3.24,7.51 M4.027,7.771l4.301-4.3v2.073c0,0.232,0.21,0.409,0.441,0.366c0.298-0.056,0.746-0.123,1.184-0.123c3.402,0,6.172,2.709,6.172,6.041c0,1.695-0.718,3.24-1.979,4.352c0.193-0.51,0.293-1.045,0.293-1.602c0-2.76-2.266-5-5.046-5c-0.256,0-0.528,0.018-0.747,0.05C8.465,9.653,8.328,9.81,8.328,9.995v2.074L4.027,7.771z"></path>
+                                                    </svg>
+                                    
+                                                    Reply</a> 
+                                                </p>
+                                              </div><ul class='CommentList CommentListThread CommentListReplies'>
+                                            <li id='Comment7' class='CommentListItem CommentHasReplies' data-comment='7'>
+                                              <p class='CommentHeader'><span class='CommentCite'>Andreas Pätzold</span> <small class='CommentCreated'>2 hours ago</small> <span class='CommentVotes'><a class='CommentActionUpvote' title='Like this comment' data-url='/pwdemo/blog/phase-data-extended-transaction/?comment_success=upvote&amp;comment_id=7&amp;field_id=99#Comment7' href='#Comment7'>&uarr;<small class='CommentUpvoteCnt'>1</small></a></span> </p>
+                                              <div class='CommentText'>
+                                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. </p>
+                                              </div>
+                                              <div class='CommentFooter'>
+                                                <p class='CommentAction'>
+                                                  <a class='CommentActionReply' data-comment-id='7' href='#Comment7'>
+                                                    <svg class="svg-icon w-4 h-4 inline" viewBox="0 0 20 20">
+                                                      <path d="M3.24,7.51c-0.146,0.142-0.146,0.381,0,0.523l5.199,5.193c0.234,0.238,0.633,0.064,0.633-0.262v-2.634c0.105-0.007,0.212-0.011,0.321-0.011c2.373,0,4.302,1.91,4.302,4.258c0,0.957-0.33,1.809-1.008,2.602c-0.259,0.307,0.084,0.762,0.451,0.572c2.336-1.195,3.73-3.408,3.73-5.924c0-3.741-3.103-6.783-6.916-6.783c-0.307,0-0.615,0.028-0.881,0.063V2.575c0-0.327-0.398-0.5-0.633-0.261L3.24,7.51 M4.027,7.771l4.301-4.3v2.073c0,0.232,0.21,0.409,0.441,0.366c0.298-0.056,0.746-0.123,1.184-0.123c3.402,0,6.172,2.709,6.172,6.041c0,1.695-0.718,3.24-1.979,4.352c0.193-0.51,0.293-1.045,0.293-1.602c0-2.76-2.266-5-5.046-5c-0.256,0-0.528,0.018-0.747,0.05C8.465,9.653,8.328,9.81,8.328,9.995v2.074L4.027,7.771z"></path>
+                                                    </svg>
+                                                    Reply</a> 
+                                                </p>
+                                              </div><ul class='CommentList CommentListThread CommentListReplies'>
+                                            <li id='Comment8' class='CommentListItem' data-comment='8'>
+                                              <p class='CommentHeader'><span class='CommentCite'>Raya Chernovic</span> <small class='CommentCreated'>2 hours ago</small> <span class='CommentVotes'><a class='CommentActionUpvote' title='Like this comment' data-url='/pwdemo/blog/phase-data-extended-transaction/?comment_success=upvote&amp;comment_id=8&amp;field_id=99#Comment8' href='#Comment8'>&uarr;<small class='CommentUpvoteCnt'>0</small></a></span> </p>
+                                              <div class='CommentText'>
+                                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.. </p>
+                                              </div>
+                                              <div class='CommentFooter'></div>
+                                            </li>
+                                          </ul>
+                                            </li>
+                                          </ul>
+                                            </li>
+                                      </ul>
+                                        </div>
+                                          <div id='CommentForm' class='CommentForm_new'>
+                                            <div class="px-4 py-5 border-b border-gray-200 sm:px-6">
+                                              <h3 class="text-lg leading-6 font-medium text-gray-900">
+                                                Post Comment
+                                              </h3>
+                                          </div>
+                                          <div class="p-4">
+                                          <div id='CommentPostNote'><p class='success'><strong>Thank you, your submission has been saved.</strong></p></div>
+                                          <form class='CommentForm CommentFormThread' action='./#CommentForm' method='post'>
+                                            <p class='CommentFormCite CommentForm_cite'>
+                                              <label>
+                                                <span>Your Name</span> 
+                                                <input type='text' name='cite' class='required' required='required' value='admin' maxlength='128' />
+                                              </label> 
+                                            </p>
+                                            <p class='CommentFormEmail CommentForm_email'>
+                                              <label>
+                                                <span>Your E-Mail</span> 
+                                                <input type='email' name='email' class='required email' required='required' value='exampleemail@uni.com' maxlength='255' />
+                                              </label>
+                                            </p>
+                                            <p class='CommentFormText CommentForm_text'>
+                                              <label>
+                                                <span>Comments</span>
+                                                <textarea name='text' class='required' required='required' rows='5' cols='50'></textarea>
+                                              </label>
+                                            </p>
+                                            <p class='CommentFormSubmit CommentForm_submit'>
+                                              <button type='submit' class='' name='CommentForm_submit' value='1'>Submit</button>
+                                              <input type='hidden' name='page_id' value='1015' />
+                                              <input type='hidden' class='CommentFormParent' name='parent_id' value='0' />
+                                            </p>
+                                          </form>
+                                          </div>
+                                          </div>
+
+                                   </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                       
+                        
+                            </div>
+                </div>
+            
+            
+          </div>
+
+            
+        </div>
+        </main>
+        <div class="bg-gray-300 p-8">
+        <div class="container mx-auto">
+            <div class="sm:flex mb-4">
+          <div class="sm:w-1/2 h-auto">
+              <div class="text-base font-bold mb-2">Organizing commitee</div>
+              <ul class="list-reset leading-normal">
+                  <li class="hover:text-orange text-gray-600">Olaf Rymsberg</li>
+                  <li class="hover:text-orange text-gray-600">Diana Feinholm</li>
+                  <li class="hover:text-orange text-gray-600">Wei Li Chan</li>
+                  
+              </ul>
+          </div>
+         
+          <div class="sm:w-1/2 h-auto sm:mt-0 mt-8">
+            <div class="text-base font-bold mb-2">Legal information</div>
+            <ul class="list-reset leading-normal">
+                <li class="hover:text-orange text-gray-600">Privacy Statement</li>
+                <li class="hover:text-orange text-gray-600">Impressum</li>
+                                
+            </ul>
+        </div>
+        <div class="sm:w-1/2 h-auto sm:mt-0 mt-8">
+            <div class="text-base font-bold mb-2">Support</div>
+            <ul class="list-reset leading-normal">
+                <li class="hover:text-orange text-gray-600">Technical support</li>
+                <li class="hover:text-orange text-gray-600">Contact the organizers</li>
+                                
+            </ul>
+        </div>
+            <div class="sm:w-1/4 sm:mt-0 mt-8 h-auto">
+                <div class="text-base font-bold mb-2">Newsletter</div>
+                <p class="text-gray-600 leading-normal">Put yourself on the mailing list. </p>
+                <div class="mt-4 flex">
+                    <input type="text" class="p-2 border border-gray-200 round text-gray-700 text-sm h-auto" placeholder="Your email address">
+                    <button class="bg-gray-800 text-white rounded-sm h-auto text-xs p-3">Subscribe</button>
+                </div>
+            </div>
+        
+        </div>
+        </div> 
+    </div>
+</body>
+</html>
