@@ -1,0 +1,142 @@
+.InputfieldPasswordRow > label {
+	position:absolute;
+	left:-10000px;
+	top:auto;
+	width:1px;
+	height:1px;
+	overflow:hidden;
+}
+
+.InputfieldPassword input[disabled=disabled] {
+	opacity: 0.6;
+}
+
+.InputfieldPassword .pass-confirm > span, 
+.InputfieldPassword .pass-scores > span {
+	display: none;
+}
+.InputfieldPassword .pass-confirm > span.on, 
+.InputfieldPassword .pass-scores > span.on {
+	display: inline;
+}
+
+.InputfieldPassword .pass-require-good {
+	text-decoration: line-through;
+}
+
+.pass-invalid,
+.pass-short,
+.pass-same, 
+.pass-common {
+	color: red; 
+}
+
+.confirm-no,
+.pass-fail {
+	color: orangered;
+}
+
+.pass-weak {
+	color: orangered;
+}
+.pass-medium {
+	color: orangered;
+}
+
+.pass-good {
+	color: seagreen;
+}
+
+.pass-matches .pass-weak,
+.pass-matches .pass-medium,
+.pass-matches .pass-good,
+.pass-matches .pass-excellent {
+	color: green;
+}
+
+.confirm-yes, 
+.pass-excellent {
+	color: green;
+}
+
+
+.Inputfield {
+	clear: both;
+    box-sizing: border-box;
+    
+}
+
+.Inputfield:not(.InputfieldSubmit) {
+	margin: 1rem 0.25rem;
+
+}
+.InputfieldHeader {
+	/* primary label */
+    font-weight: bold;
+   
+}
+#LoginRegisterConfirmationForm{
+    margin: 2rem 0;
+}
+.Inputfield_register_confirm{
+    margin-bottom: 1.5rem;
+}
+.InputfieldContent>.description{
+    font-size: 0.75rem;
+}
+.Inputfield input[type=text],
+.Inputfield input[type=email] {
+    width: 100%;
+    
+}
+.Inputfield a{
+	color:#666;
+}
+.Inputfield a:hover{
+	color: #c93;
+}
+
+#wrap_Inputfield_profile_required_checkbox>.InputfieldContent span, .Inputfield_register_required_checkbox>.InputfieldContent span{
+	margin-left: 1rem;
+}
+.Inputfield_register_required_checkbox, #wrap_Inputfield_profile_required_checkbox{
+	margin-bottom: 2.5rem;
+	display:block;
+}
+#wrap_Inputfield_profile_required_checkbox{
+	margin:1.5rem 0;
+}
+.InputfieldColumnWidth {
+	/* columns that are not 100% width */
+	float: left;
+	clear: none;
+}
+.InputfieldColumnWidthFirst {
+	/* first column in a row of Inputfield columns */
+	clear: both;
+}
+.InputfieldColumnWidth:not(.InputfieldColumnWidthFirst) {
+	/* any column except first, in a row of Inputfield columns */
+	margin-left: 1%;
+}
+.InputfieldPassword input {
+	/* password input */
+	width: 70%;
+}
+.LoginRegisterMessage {
+	/* message notification */
+	color: green;
+	border: 1px solid green;
+	font-weight: bold;
+    padding: 10px 20px;
+    margin: 2rem 0;
+    text-align:center;
+}
+.LoginRegisterError {
+    /* error notification */
+    margin: 2rem 0;
+	color: red;
+	border: 1px solid red;
+	font-weight: bold;
+	padding: 10px 20px;
+}
