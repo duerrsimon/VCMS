@@ -1,0 +1,82 @@
+<?php namespace ProcessWire;
+
+class Schedule extends Process {
+
+	public static function getModuleInfo() {
+		return array(
+			'title' => 'Schedule',
+			'summary' => 'Make the schedule',
+			'version' => 001,
+			'permanent' => false,
+			'singular' => true,	
+			'permission' => 'schedule', 
+			'permissions' => array(
+				'schedule' => 'Schedule'
+			), 
+		);
+	}
+
+	public function init() {
+		parent::init();
+	}
+
+	public function ___execute() {
+		$this->wire('processHeadline', 'Schedule');
+        $this->config->styles->append("https://rsms.me/inter/inter.css");
+        $this->config->styles->append($this->config->urls->siteModules . "Schedule/tailwind.min.css");
+        #$this->config->scripts->append($this->config->urls->siteModules . "Schedule/schedule.js");
+		$this->config->scripts->append("https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js");
+		$out ="<div id=\"app\"><input type=\"hidden\" name=\"httpUrl\" ref=\"httpurl\" value=\"".$this->pages->get('/')->httpUrl."\">   </div>";
+		$out.="<script src='{$this->config->urls->siteModules}Schedule/schedule.js' ></script>";
+	    $out.='<div class="uk-alert-primary" uk-alert><a class="uk-alert-close" uk-close></a><p>If you want to create other types of content you can create new pages with template <span class="uk-label uk-inline">talk</span> in by navigating to  Pages / Contributions / Accepted in the backend.</p>	</div>';
+		return $out;
+	}
+
+	public function ___executeSave() {
+		// This method return nothing but saves the schedule as JSON file.
+		$sentSchedule=json_decode($this->input->post->data, true);
+
+		foreach ($sentSchedule as $day){
+			foreach ($day["list"] as $talk){
+				//bdump($talk);
+				if ($talk["category"]!="Break") {
+					date_default_timezone_set('UTC');
+					$t=$this->pages->get($this->sanitizer->int($talk["id"]));
+					$t->setOutputFormatting(false);
+					$t->videoconferenceurl=$this->sanitizer->url($talk["link"]);
+					$t->clockstart=strtotime($this->sanitizer->text($talk["clockstart"]));
+					$t->clockend=strtotime($this->sanitizer->text($talk["clockend"]));
+					$t->category=$this->sanitizer->url($talk["category"]);
+					$t->scheduled=1;
+				}
+				$t->save();
+			}
+		}
+		$fp = fopen('results.json', 'w');
+		fwrite($fp, json_encode($this->input->post->data, true));
+		fclose($fp);	
+	}
+	public function ___executeUnschedule() {
+		// In order to track unscheduling of an event each time an event is removed from the schedule its status is updated.
+		$t=$this->pages->get($this->sanitizer->int($this->input->post->id));
+		$t->setOutputFormatting(false);
+		$t->scheduled=0;
+		$t->save("scheduled");
+	}
+	
+
+	public function install() {
+		$drafts = new Page();
+		$drafts->template = $this->templates->get("admin");
+		$drafts->parent = $this->pages->get($this->config->adminRootPageID);
+		$drafts->title = 'Schedule';
+		$drafts->name = 'schedule';
+		$drafts->process = $this;
+		$drafts->save();
+	}
+
+	public function uninstall() {
+		$p = $this->pages->get('template=admin, name=schedule, include=all');
+		if ($p->id) $this->pages->delete($p, true); // Recursive delete
+	}
+}

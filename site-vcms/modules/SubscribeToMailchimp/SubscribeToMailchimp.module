@@ -1,0 +1,254 @@
+<?php
+class SubscribeToMailchimp extends WireData implements Module, ConfigurableModule {
+
+    static function getModuleInfo() {
+        return [
+            'title'   => 'Subscribe to Mailchimp',
+            'summary' => 'Subscribe, update, unsubscribe or delete a user in your Mailchimp mailing audience.',
+            'version' => '0.0.6',
+            'author'  => 'danielstieber',
+            'href'    => 'https://github.com/danielstieber/SubscribeToMailchimp',
+            'icon'    => 'address-card',
+            'autoload'=> false,
+            'singular'=> false
+        ];
+    }
+    const WARNING_VALIDATION = "A user managed to send a form without an email address. Please check your form validation! A server-sided validation (e.g. via Valitron) is strongly recommended.";
+    static public function getDefaults() {
+        return array(
+            "double_opt_in" => "checked",
+        );
+    }
+    protected $httpPatchOptions = [
+        'use' => 'socket',
+        'fallback' => 'socket' // false, 'auto', 'socket' or 'curl'
+    ];
+    private function getApiBase($list = null, $param = null) {
+        $dc = explode('-',$this->api_key)[1];
+        $return = "https://".$dc.".api.mailchimp.com/3.0/";
+        if(!is_null($list)) $return .= "lists/".$list."/"; // trailing slash to make further parameters possible
+        if(!is_null($param)) $return .= $param; // no trailing slash since not necessary
+        return $return;
+    }
+    public function subscribe($email, array $merge_fields = [], $list = NULL, array $param = []) {
+        $list = is_null($list) ? $this->default_list : $list; // use default audience from module settings, if no audience is provided
+        if(isset($email)) {
+            $api = $this->getApiBase($list, 'members');
+            $param['email_address'] = $email;
+
+            foreach ($merge_fields as $k => $v) {
+                if(is_array($v) && count($v) > 0) { // ADDRESS merge_field (cf. https://us1.api.mailchimp.com/schema/3.0/Lists/Members/MergeField.json)
+                    foreach ($v as $k2 => $v2) {
+                        if (!empty(trim($v2))) {
+                            $param['merge_fields'][$k][$k2] = $v2;
+                        }
+                    }
+                } else if(!empty(trim($v))) { // avoid to override data of existing leads with empty field values
+                    $param['merge_fields'][$k] = $v;
+                }
+            }
+
+            $http = new WireHttp();
+            $http->setHeaders([
+                'Content-Type' => 'application/json',
+                'Authorization' => 'Basic '.base64_encode('user:'.$this->api_key),
+            ]);
+            $status = $this->getStatus($email, $list); // get the current subscription status of the user
+            if($status !== false && $status !== 404) {
+                if ($status == 'unsubscribed') {
+                    if($this->double_opt_in)
+                        $param['status'] = 'pending';
+                    else
+                        $param['status'] = 'subscribed';
+                }
+                $response = $http->send($api . '/' . md5($email), json_encode($param), 'PATCH', $this->httpPatchOptions);
+            } else {
+                if($this->double_opt_in)
+                    $param['status'] = 'pending';
+                else
+                    $param['status'] = 'subscribed';
+                $response = $http->send($api, json_encode($param), 'POST');
+            }
+            if($response !== false) {
+                return true;
+            } else {
+                $this->warning("Mailchimp request subscribe() not successful: " . $http->getError(), Notice::log); // Log warning in Processwire backend
+                return false;
+            }
+        } else {
+            $this->warning(self::WARNING_VALIDATION); // Log warning, if a user is able to send a form without email.
+            return false;
+        }
+    }
+    public function unsubscribe($email, $list = NULL) {
+        $param = [];
+        $list = is_null($list) ? $this->default_list : $list; // use default audience from module settings, if no audience is provided
+        if(isset($email)) {
+            $api = $this->getApiBase($list, 'members/' . md5($email));
+            $http = new WireHttp();
+            $http->setHeaders([
+                'Content-Type' => 'application/json',
+                'Authorization' => 'Basic '.base64_encode('user:'.$this->api_key),
+            ]);
+            $param['status'] = 'unsubscribed';
+            $response = $http->send($api, json_encode($param), 'PATCH', $this->httpPatchOptions); // update listentry with param 'unsubscribed'
+            if($response !== false) {
+                return true;
+            } else {
+                $this->warning("Mailchimp request unsubscribe() not successful: " . $http->getError(), Notice::log); // Log warning in Processwire backend
+                return false;
+            }
+        } else {
+            $this->warning(self::WARNING_VALIDATION); // Log warning, if a user is able to send a form without email.
+            return false;
+        }
+    }
+    public function delete($email, $list = NULL) {
+        $list = is_null($list) ? $this->default_list : $list; // use default audience from module settings, if no audience is provided
+        if(isset($email)) {
+            $api = $this->getApiBase($list, 'members/' . md5($email));
+            $http = new WireHttp();
+            $http->setHeaders([
+                'Content-Type' => 'application/json',
+                'Authorization' => 'Basic '.base64_encode('user:'.$this->api_key),
+            ]);
+            $response = $http->send($api, [], 'DELETE'); // delete entry
+            if($response !== false) {
+                return true;
+            } else {
+                $this->warning("Mailchimp request delete() not successful: " . $http->getError(), Notice::log); // Log warning in Processwire backend
+                return false;
+            }
+        } else {
+            $this->warning(self::WARNING_VALIDATION); // Log warning, if a user is able to send a form without email.
+            return false;
+        }
+    }
+    public function getStatus($email, $list = NULL) {
+        $list = is_null($list) ? $this->default_list : $list; // use default audience from module settings, if no audience is provided
+        if(isset($email)) {
+            $api = $this->getApiBase($list, 'members/'.md5($email)); // get the api path
+            $http = new WireHttp();
+            $http->setHeaders([
+                'Authorization' => 'Basic '.base64_encode('user:'.$this->api_key)
+            ]);
+            $response = $http->get($api); // get the entry of the given mail adress on the audience
+            if($response !== false) {
+                return json_decode($response)->status; // return the subscription status
+            } else {
+                return false;
+            }
+        } else {
+            $this->warning(self::WARNING_VALIDATION); // Log warning, if a user is able to send a form without email.
+            return false;
+        }
+    }
+    public static function getModuleConfigInputfields(array $data) {
+        $defaults = self::getDefaults();
+        $data = array_merge($defaults, $data);
+        $wrap = new InputfieldWrapper();
+        $form = wire('modules')->get('InputfieldFieldset');
+        $form->label = __('Mailchimp Configuration');
+        $form->notes = __('Check out the README, if you have troubles to find the data for the fields above.');
+        $form->collapsed = wire('session')->mailchimp_test_settings ? Inputfield::collapsedNo : Inputfield::collapsedPopulated;
+        $inputfields = [
+            'api_key' => __('API Key'),
+            'default_list' => __('Default audience id (can be overwritten by every form)'),
+        ];
+        $checkboxfields = [
+            'double_opt_in' => __('Use double opt in. (Recommended)'),
+        ];
+        foreach($inputfields as $name => $label) {
+            $f = wire('modules')->get('InputfieldText');
+            $f->attr('name', $name);
+            $f->label = $label;
+            $f->required = true;
+            $f->columnWidth = 50;
+            if(isset($data[$name]))
+                $f->attr('value', $data[$name]);
+            $form->add($f);
+        }
+        foreach($checkboxfields as $name => $label) {
+            $f = wire('modules')->get("InputfieldCheckbox");
+            $f->name = $name;
+            $f->label = $label;
+            $f->attr('checked', empty($data[$name]) ? '' : 'checked');
+            $f->columnWidth = 100;
+            $form->add($f);
+        }
+
+        // TEST SETTINGS ||>>>
+        $f = wire('modules')->get('InputfieldCheckbox');
+        $f->attr('name', '_mailchimp_test_settings');
+        $f->label = __('Test your current settings!');
+        $f->description = __('Check this box and press save, to test the API Key and default audience settings!');
+        $f->attr('value', 1);
+        $f->attr('checked', '');
+        $f->icon = 'heartbeat';
+        $f->columnWidth = wire('session')->mailchimp_test_settings ? 40 : 100;
+        $form->add($f);
+
+        if(wire('session')->mailchimp_test_settings) {
+            wire('session')->remove('mailchimp_test_settings');
+            $response = self::testSettings();
+            $f = wire('modules')->get('InputfieldMarkup');
+            $f->attr('name', '_test_response');
+            $f->label = __('Test Response: ');
+            $f->columnWidth = 60;
+            $f->attr('value', $response);
+            $form->add($f);
+        } else if(wire('input')->post->_mailchimp_test_settings) {
+            wire('session')->set('mailchimp_test_settings', 1);
+        }
+        // <<<|| TEST SETTINGS
+
+        $wrap->add($form);
+        return $wrap;
+    }
+    // static, so it can get called from static function getModuleConfigInputfields, but also from within your template files: $response = SubscribeToMailchimp::testSettings($listID);
+    public static function testSettings($list = null) {
+        $mc = wire('modules')->get('SubscribeToMailchimp');
+        $list = is_null($list) ? $mc->default_list : $list;
+        $api = $mc->getApiBase($list);
+        $errors = [];
+        try {
+            $http = new WireHttp();
+            $http->setHeaders([
+                'Authorization' => 'Basic '.base64_encode('user:'.$mc->api_key)
+            ]);
+            $response = $http->send($api, '', 'GET');
+            if($response === false) {
+                $err = $http->getError();
+                if('401' == substr($err, 0, 3)) {
+                    $response = "<h3 style='color: red;'>401 Unauthorized</h3>";
+                    $response .= "<p style='color: red;'><strong>Check your API Key</strong></p>";
+                } else if('404' == substr($err, 0, 3)) {
+                    $response = "<h3 style='color: red;'>404 Not Found</h3>";
+                    $response .= "<p style='color: red;'><strong>Check your Audience-ID</strong></p>";
+                } else {
+                    $response = '';
+                }
+                $response .= "<p style='color: red;'>".__('Mailchimp request not successful:')." {$err}</p>";
+            } else {
+                $res = json_decode($response);
+                $response = '';
+                if(isset($res->name)) $response .= "<p>Audience-Name: <strong>{$res->name}</strong></p>";
+                if(isset($res->id)) $response .= "<p>Audience-ID: <strong>{$res->id}</strong></p>";
+                $response .= "<p>";
+                foreach(['company', 'address1', 'address2', 'city', 'state', 'zip', 'country', 'phone'] as $param) {
+                    if(isset($res->contact->$param) && !empty($res->contact->$param)) $response .= "{$param}: <strong>{$res->contact->$param}</strong><br />";
+                }
+                $response .= "</p>";
+            }
+        } catch(Exception $e) {
+            $errors[] = $e->getMessage();
+        }
+        if(count($errors)) {
+            $response = '';
+            foreach($errors as $error) {
+                $response .= "<p style='color: red;'>{$error}</p>";
+            }
+        }
+        return $response;
+    }
+}

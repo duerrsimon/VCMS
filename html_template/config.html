@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Virtual Conference Management System</title>
+    <link rel="stylesheet" href="fonts/inter.css">
+    <link rel="stylesheet" href="css/tailwind.min.css">
+    <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.0.1/dist/alpine.js" defer></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+
+</head>
+<body>
+    <div>
+        <nav x-data="{ open: false }" @keydown.window.escape="open = false" class="bg-gray-800">
+          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+              <div class="flex items-center">
+                <div class="flex-shrink-0">
+                  <img class="h-8 w-8" src="img/logo.svg" alt="VCMS logo" />
+                </div>
+                <div class="hidden md:block">
+                  <div class="ml-10 flex items-baseline">
+                    <a href="#" class="px-3 py-2 rounded-md text-sm font-medium text-white bg-gray-900 focus:outline-none focus:text-white focus:bg-gray-700">Home</a>
+                    <a href="schedule.html" class="ml-4 px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700">Schedule</a>
+
+                    <a href="speakers.html" class="ml-4 px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700">Speakers</a>
+                    <a href="posters.html" class="ml-4 px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700">Posters</a>
+
+                    <a href="faq.html" class="ml-4 px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700">FAQ</a>
+                    <a href="about.html" class="ml-4 px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700">About</a>
+
+                  </div>
+                </div>
+              </div>
+              <div class="hidden md:block">
+                <div class="ml-4 flex items-center md:ml-6">
+                    <div @click.away="open = false" class="ml-3 relative" x-data="{ open: false }">
+                        <div>
+                            <button @click="open = !open" class="p-1 border-2 border-transparent text-gray-400 rounded-full hover:text-white focus:outline-none focus:text-white focus:bg-gray-700" aria-label="Notifications" aria-haspopup="true" x-bind:aria-expanded="open">
+                                <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                                </svg>
+                              </button>
+                        </div>
+                        <div x-show="open" x-transition:enter="transition ease-out duration-100" x-transition:enter-start="transform opacity-0 scale-95" x-transition:enter-end="transform opacity-100 scale-100" x-transition:leave="transition ease-in duration-75" x-transition:leave-start="transform opacity-100 scale-100" x-transition:leave-end="transform opacity-0 scale-95" class="origin-top-right absolute right-0 mt-2 w-64 rounded-md shadow-lg">
+                          <div class="rounded-md bg-white shadow-xs">
+                            <!-- <p class="text-sm p-4">You have 0 comments</p> -->
+                            <div class="flex text-sm max-w-md bg-white shadow-lg  overflow-hidden">
+                                <div class="w-2 bg-green-500"></div>
+                                <div class="flex items-center px-2 py-3">
+                                   <div class="mx-3">
+                                    <h2 class="font-semibold text-gray-800">New Comment</h2>
+                                    <p class="text-gray-600">John Doe commented on your <a href="#" class="text-blue-500">Poster</a>.</p>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="flex text-sm max-w-md bg-white shadow-lg overflow-hidden">
+                                <div class="w-2 bg-blue-500"></div>
+                                <div class="flex items-center px-2 py-3">
+                                   <div class="mx-3">
+                                    <h2 class="font-semibold text-gray-800">New Like</h2>
+                                    <p class="text-gray-600">You have a new like on your <a href="#" class="text-blue-500">Poster</a>.</p>
+                                  </div>
+                                </div>
+                              </div>
+                          </div>
+                        </div>
+                      </div>  
+                 
+                  <div @click.away="open = false" class="ml-3 relative" x-data="{ open: false }">
+                    <div>
+                      <button @click="open = !open" class="max-w-xs flex items-center text-sm rounded-full text-gray-400 rounded-full hover:text-white focus:outline-none focus:text-white" id="user-menu" aria-label="User menu" aria-haspopup="true" x-bind:aria-expanded="open">
+                       
+                        <svg class="svg-icon h-6 w-6 stroke-1 stroke-current" viewBox="0 0 20 20">
+                          <path fill="none" d="M10,10.9c2.373,0,4.303-1.932,4.303-4.306c0-2.372-1.93-4.302-4.303-4.302S5.696,4.223,5.696,6.594C5.696,8.969,7.627,10.9,10,10.9z M10,3.331c1.801,0,3.266,1.463,3.266,3.263c0,1.802-1.465,3.267-3.266,3.267c-1.8,0-3.265-1.465-3.265-3.267C6.735,4.794,8.2,3.331,10,3.331z"></path>
+                          <path fill="none" d="M10,12.503c-4.418,0-7.878,2.058-7.878,4.685c0,0.288,0.231,0.52,0.52,0.52c0.287,0,0.519-0.231,0.519-0.52c0-1.976,3.132-3.646,6.84-3.646c3.707,0,6.838,1.671,6.838,3.646c0,0.288,0.234,0.52,0.521,0.52s0.52-0.231,0.52-0.52C17.879,14.561,14.418,12.503,10,12.503z"></path>
+                        </svg>
+                      </button>
+                    </div>
+                    <div x-show="open" x-transition:enter="transition ease-out duration-100" x-transition:enter-start="transform opacity-0 scale-95" x-transition:enter-end="transform opacity-100 scale-100" x-transition:leave="transition ease-in duration-75" x-transition:leave-start="transform opacity-100 scale-100" x-transition:leave-end="transform opacity-0 scale-95" class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg">
+                      <div class="py-1 rounded-md bg-white shadow-xs">
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Your Profile</a>
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Submissions</a>
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Sign out</a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="-mr-2 flex md:hidden">
+                <button @click="open = !open" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:bg-gray-700 focus:text-white" x-bind:aria-label="open ? 'Close main menu' : 'Main menu'" x-bind:aria-expanded="open">
+                  <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                    <path :class="{'hidden': open, 'inline-flex': !open }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    <path :class="{'hidden': !open, 'inline-flex': open }" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div :class="{'block': open, 'hidden': !open}" class="hidden md:hidden">
+            <div class="px-2 pt-2 pb-3 sm:px-3">
+              <a href="index.html" class="block px-3 py-2 rounded-md text-base font-medium text-white bg-gray-900 focus:outline-none focus:text-white focus:bg-gray-700">Home</a>
+              <a href="schedule.html" class="mt-1 block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700">Schedule</a>
+              <a href="speakers.html" class="mt-1 block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700">Speakers</a>
+              <a href="posters.html" class="mt-1 block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700">Posters</a>
+              <a href="faq.html" class="mt-1 block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700">FAQ</a>
+              <a href="about.html" class="mt-1 block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700">About</a>
+            </div>
+            <div class="pt-4 pb-3 border-t border-gray-700">
+              <div class="flex items-center px-5">
+                <div class="flex-shrink-0">
+                  <svg class="svg-icon h-10 w-10 stroke-1 stroke-current text-cool-gray-100" viewBox="0 0 20 20">
+                    <path fill="none" d="M10,10.9c2.373,0,4.303-1.932,4.303-4.306c0-2.372-1.93-4.302-4.303-4.302S5.696,4.223,5.696,6.594C5.696,8.969,7.627,10.9,10,10.9z M10,3.331c1.801,0,3.266,1.463,3.266,3.263c0,1.802-1.465,3.267-3.266,3.267c-1.8,0-3.265-1.465-3.265-3.267C6.735,4.794,8.2,3.331,10,3.331z"></path>
+                    <path fill="none" d="M10,12.503c-4.418,0-7.878,2.058-7.878,4.685c0,0.288,0.231,0.52,0.52,0.52c0.287,0,0.519-0.231,0.519-0.52c0-1.976,3.132-3.646,6.84-3.646c3.707,0,6.838,1.671,6.838,3.646c0,0.288,0.234,0.52,0.521,0.52s0.52-0.231,0.52-0.52C17.879,14.561,14.418,12.503,10,12.503z"></path>
+                  </svg>
+                </div>
+                <div class="ml-3">
+                  <div class="text-base font-medium leading-none text-white">John Doe</div>
+                  <div class="mt-1 text-sm font-medium leading-none text-gray-400">doe@openuni.com</div>
+                </div>
+              </div>
+              <div class="mt-3 px-2" role="menu" aria-orientation="vertical" aria-labelledby="user-menu" role="menuitem">
+                <a href="#" class="block px-3 py-2 rounded-md text-base font-medium text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700" role="menuitem">Your Profile</a>
+                <a href="#" class="mt-1 block px-3 py-2 rounded-md text-base font-medium text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700" role="menuitem">Submissions</a>
+                <a href="#" class="mt-1 block px-3 py-2 rounded-md text-base font-medium text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700" role="menuitem">Sign out</a>
+              </div>
+            </div>
+          </div>
+        </nav>
+        <header class="bg-red-200">
+            <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+              <h1 class="text-3xl font-bold leading-tight text-gray-900">
+                Configuration
+              </h1>
+           
+            </div>
+          </header>
+    </div>
+    <main>
+        <div class="bg-gray-200 pb-8">
+
+      <div class="max-w-7xl mx-auto py-6 px-1 sm:px-6 lg:px-8 flex flex-wrap lg:flex-no-wrap align-top">
+       
+        
+        <div class="w-full lg:w-2/3">
+         
+           <div class="bg-white shadow overflow-hidden sm:rounded-lg relative flex-grow-0">
+            <div class="px-4 py-5 border-b border-gray-200 sm:px-6">
+                <h3 class="text-lg leading-6 font-medium text-gray-900">
+                  Modules
+                </h3>
+                <h5 class="mt-1 max-w-2xl text-sm leading-5 text-gray-500">
+                  Choose active modules
+                </h5>
+               <div class="flex items-center ">
+                        <div class=" w-1/3  mt-4 mb-4 mr-8 flex items-center">
+                            <div>
+                        <input type="checkbox" id="unchecked" class="cbx hidden"/>
+                        <label for="unchecked" class="lbl"></label> 
+                        </div>  
+                        <span class="ml-4"> Comments</span>
+                    
+                        </div>
+                        <p class="text-sm">Enable comments module for posters and talks</p>
+               </div>
+               <div class="flex items-center ">
+                <div class="w-1/3 mt-4 mb-4 mr-8 flex items-center">
+                    <div>
+                <input type="checkbox" id="unchecked" class="cbx hidden"/>
+                <label for="unchecked" class="lbl"></label> 
+                </div>  
+                <span class="ml-4"> Virtual poster session</span>
+            
+                </div>
+                <p class="text-sm">Enable virtual poster session module with submission via frontend.</p>
+       </div>
+       <div class="flex items-center ">
+        <div class=" w-1/3  mt-4 mb-4 mr-8 flex items-center">
+            <div>
+        <input type="checkbox" id="unchecked" class="cbx hidden"/>
+        <label for="unchecked" class="lbl"></label> 
+        </div>  
+        <span class="ml-4"> Schedule</span>
+    
+        </div>
+        <p class="text-sm">Activate schedule page</p>
+        </div>
+
+        <div class="flex items-center ">
+            <div class=" w-1/3  mt-4 mb-4 mr-8 flex items-center">
+                <div>
+            <input type="checkbox" id="unchecked" class="cbx hidden"/>
+            <label for="unchecked" class="lbl"></label> 
+            </div>  
+            <span class="ml-4"> Speakers</span>
+        
+            </div>
+            <p class="text-sm">Activate speaker page</p>
+            </div>
+            <div class="flex items-center ">
+                <div class=" w-1/3  mt-4 mb-4 mr-8 flex items-center">
+                    <div>
+                <input type="checkbox" id="faq" class="cbx hidden"/>
+                <label for="faq" class="lbl"></label> 
+                </div>  
+                <span class="ml-4"> FAQ</span>
+            
+                </div>
+                <p class="text-sm">Activate FAQ page</p>
+                </div>
+
+
+            </div>
+          </div>
+          <div class="bg-white mt-4 shadow overflow-hidden sm:rounded-lg relative flex-grow-0">
+            <div class="px-4 py-5 border-b border-gray-200 sm:px-6">
+                <h3 class="text-lg leading-6 font-medium text-gray-900">
+                  Meeting settings
+                </h3>
+                <h5 class="mt-1 max-w-2xl text-sm leading-5 text-gray-500">
+                  General settings
+                </h5>
+                <form class="w-full  mt-4">
+                    <div class="flex flex-wrap -mx-3 mb-6">
+                      <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+                        <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="grid-first-name">
+                         Name of Meeting                        </label>
+                        <input class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" id="grid-first-name" type="text" placeholder="Jane">
+                        
+                      </div>
+                      <div class="w-full md:w-1/2 px-3">
+                        <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="grid-last-name">
+                          Secondary Name
+                        </label>
+                        <input class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-last-name" type="text" placeholder="Doe">
+                      </div>
+                    </div>
+                    <div class="flex flex-wrap -mx-3 mb-6">
+                      <div class="w-full px-3">
+                        <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="grid-password">
+                          Short description
+                        </label>
+                        <textarea class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"> </textarea>
+                        <p class="text-gray-600 text-xs italic">Stay below 300 characters.</p>
+                      </div>
+                    </div>
+                    <div class="flex flex-wrap -mx-3 mb-2">
+                      <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+                        <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="grid-zip">
+                            Start date
+                          </label>
+                        <input class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-city" type="date" placeholder="Albuquerque">
+                      </div>
+                    
+                      <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+                        <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="grid-zip">
+                          End date
+                        </label>
+                        <input class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-zip" type="date" placeholder="90210">
+                      </div>
+                    </div>
+                  </form>
+            </div>
+          </div>
+          <div class="bg-white shadow overflow-hidden sm:rounded-lg relative mt-4 flex-grow-0">
+            <div class="px-4 py-5 border-b border-gray-200 sm:px-6">
+                <h3 class="text-lg leading-6 font-medium text-gray-900">
+                  Virtual Poster Conference
+                </h3>
+                <h5 class="mt-1 max-w-2xl text-sm leading-5 text-gray-500">
+                  Settings
+                </h5>
+              
+                <div class="flex">
+                  <div class="mt-4 mb-4 mr-8 flex items-center">
+                      <div>
+                    <input type="checkbox" id="unchecked" class="cbx hidden"/>
+                    <label for="unchecked" class="lbl"></label> 
+                    </div>  
+                    <span class="ml-4"> Enable Voting</span>
+                
+                  </div>
+
+                      <div class="flex flex-wrap items-center">
+                          <div class="flex" x-data="{ votes: 5 }">
+                        <div class="flex w-2/3" >
+                          <input type="text" x-model="votes"
+                          
+                          class="bg-white text-sm text-gray-900 text-center focus:outline-none border border-gray-600 focus:border-gray-500 rounded-l-md w-full">
+                         </div>
+                       <div class="flex flex-col w-1/3">
+                          <button
+                          class="text-white text-center text-md font-semibold rounded-tr-md px-1 bg-gray-600 focus:bg-gray-400 focus:outline-none border border-gray-600 focus:border-gray-500" x-on:click="votes++">
+                          +
+                          </button>
+                          <button
+                          class="text-white text-center text-md font-semibold rounded-br-md px-1 bg-gray-600 focus:bg-gray-400 focus:outline-none border border-gray-600 focus:border-gray-500" x-on:click="votes--">
+                          -
+                         </button>
+                        </div>
+                    </div>
+                        <span class="ml-4"> Votes per User</span>
+                       </div>
+                    </div>
+
+
+                  </div>
+
+          </div>
+          <div class="bg-white shadow overflow-hidden sm:rounded-lg relative mt-4 flex-grow-0">
+            <div class="px-4 py-5 border-b border-gray-200 sm:px-6">
+                <h3 class="text-lg leading-6 font-medium text-gray-900">
+                  Organizers
+                </h3>
+
+                <form class="w-full  mt-4">
+                    <div class="flex flex-wrap -mx-3 mb-6">
+                      <div class="w-full  px-3 mb-6 md:mb-0">
+                        <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="grid-first-name">
+                         E-mail for Contactform                     </label>
+                        <input class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" id="grid-first-name" type="text" placeholder="info@virtualconference.website">
+                        
+                      </div>
+                     
+                    </div>
+                    <div class="flex flex-wrap -mx-3 mb-6">
+                        <div class="w-full  px-3 mb-6 md:mb-0">
+                            <div class="container1 CommentFormSubmit">
+                                <button class="add_form_field ">Add New Organizer &nbsp; <span style="font-size:16px; font-weight:bold;">+ </span></button>
+                               
+                                </div>
+                        </div>
+                       
+                      </div>
+                    
+
+                    </form>
+               
+                
+            </div>
+          </div>
+
+          <div class="bg-white shadow overflow-hidden sm:rounded-lg relative mt-4 flex-grow-0">
+            <div class="px-4 py-5 border-b border-gray-200 sm:px-6">
+                <h3 class="text-lg leading-6 font-medium text-gray-900">
+                  Newsletter
+                </h3>
+
+                <form class="w-full  mt-4">
+                    <div class="flex flex-wrap -mx-3 mb-6">
+                      <div class="w-full  px-3 mb-6 md:mb-0">
+                        <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="grid-first-name">
+                        Link to Newsletter                     </label>
+                        <input class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" id="grid-first-name" type="text" placeholder="info@virtualconference.website">
+                        <p>You can paste in a mailchimp Newsletter. They will handle of GDPR Request</p>
+                      </div>
+                     
+                    </div>
+                   
+                    
+
+                    </form>
+               
+                
+            </div>
+          </div>
+
+        </div>
+
+          <div class="w-full lg:w-1/3">
+            <div class="bg-white shadow overflow-hidden mx-0  lg:mx-2 mt-2 lg:mt-0 sm:rounded-lg mb-4 h-screen">
+                <div class="px-4 py-5 sm:px-6">
+                <h3 class="text-lg leading-6 font-medium text-gray-900">
+                    Theme
+                  </h3>
+                
+
+                  <div class="block">
+                    <span class="text-gray-700">Choose color scheme</span>
+                    <div class="mt-2">
+                     <div class="mt-1">
+                        <label class="items-center block">
+                          <input type="radio" class="form-radio h-6 w-6" name="radio-sizes" value="2">
+                          <span class="ml-3 text-lg">Default</span>
+                        </label>
+                        <label class="block items-center">
+                            <input type="radio" class="form-radio h-6 w-6" name="radio-sizes" value="2">
+                            <span class="ml-3 text-lg">Light</span>
+                          </label>
+                         
+                      </div>
+                     
+                    </div>
+                  </div>
+                  <div class="block mt-4">
+                    <span class="text-gray-700">Choose color set</span>
+                    <div class="mt-2">
+                     <div class="mt-1">
+                        <label class="items-center flex my-2">
+                          <input type="radio" class="form-radio h-6 w-6" name="radio-sizes" value="2">
+                          <span class="ml-3 text-lg h-8 w-16 inline-flex bg-cool-gray-800"> </span>
+                          <span class="text-lg h-8 w-16 inline-flex bg-cool-gray-500"> </span>
+                        </label>
+                        <label class="flex items-center my-2">
+                            <input type="radio" class="form-radio h-6 w-6" name="radio-sizes" value="2">
+                            <span class="ml-3 text-lg h-8 w-16 inline-flex bg-red-800"> </span>
+                            <span class="text-lg h-8 w-16 inline-flex bg-red-500"> </span>
+                          </label>
+                          <label class="flex items-center my-2">
+                            <input type="radio" class="form-radio h-6 w-6" name="radio-sizes" value="2">
+                            <span class="ml-3 text-lg h-8 w-16 inline-flex bg-green-800"> </span>
+                            <span class="text-lg h-8 w-16 inline-flex bg-green-500"> </span>
+                          </label>
+                          <label class="flex items-center my-2">
+                            <input type="radio" class="form-radio h-6 w-6" name="radio-sizes" value="2">
+                            <span class="ml-3 text-lg h-8 w-16 inline-flex bg-blue-800"> </span>
+                            <span class="text-lg h-8 w-16 inline-flex bg-blue-500"> </span>
+                          </label>
+                          <label class="flex items-center my-2">
+                            <input type="radio" class="form-radio h-6 w-6" name="radio-sizes" value="2">
+                            <span class="ml-3 text-lg h-8 w-16 inline-flex bg-yellow-800"> </span>
+                            <span class="text-lg h-8 w-16 inline-flex bg-yellow-500"> </span>
+                          </label>
+                          <label class="flex items-center my-2">
+                            <input type="radio" class="form-radio h-6 w-6" name="radio-sizes" value="2">
+                            <span class="ml-3 text-lg h-8 w-16 inline-flex bg-teal-800"> </span>
+                            <span class="text-lg h-8 w-16 inline-flex bg-teal-500"> </span>
+                          </label>
+                          <label class="flex items-center my-2">
+                            <input type="radio" class="form-radio h-6 w-6" name="radio-sizes" value="2">
+                            <span class="ml-3 text-lg h-8 w-16 inline-flex bg-purple-800"> </span>
+                            <span class="text-lg h-8 w-16 inline-flex bg-purple-500"> </span>
+                          </label>
+                          <label class="flex items-center my-2">
+                            <input type="radio" class="form-radio h-6 w-6" name="radio-sizes" value="2">
+                            <span class="ml-3 text-lg h-8 w-16 inline-flex bg-pink-800"> </span>
+                            <span class="text-lg h-8 w-16 inline-flex bg-pink-500"> </span>
+                          </label>
+                          <label class="flex items-center my-2">
+                            <input type="radio" class="form-radio h-6 w-6" name="radio-sizes" value="2">
+                            <span class="ml-3 text-lg h-8 w-16 inline-flex bg-indigo-800"> </span>
+                            <span class="text-lg h-8 w-16 inline-flex bg-indigo-500"> </span>
+                          </label>
+                      </div>
+                     
+                    </div>
+                  </div>
+
+                </div>
+            </div>
+          </div>
+        </div>
+    </div>
+    </main>
+        <div class="bg-gray-200 px-4 md:px-8 p-8 mt-20">
+        <div class="container mx-auto">
+            <div class="sm:flex mb-4">
+          <div class="sm:w-1/2 h-auto">
+              <div class="text-base font-bold mb-2">Organizing commitee</div>
+              <ul class="list-reset leading-normal">
+                  <li class="hover:text-orange text-gray-600">Olaf Rymsberg</li>
+                  <li class="hover:text-orange text-gray-600">Diana Feinholm</li>
+                  <li class="hover:text-orange text-gray-600">Wei Li Chan</li>
+                  
+              </ul>
+          </div>
+         
+          <div class="sm:w-1/2 h-auto sm:mt-0 mt-8">
+            <div class="text-base font-bold mb-2">Legal information</div>
+            <ul class="list-reset leading-normal">
+                <li class="hover:text-orange text-gray-600">Privacy Statement</li>
+                <li class="hover:text-orange text-gray-600">Impressum</li>
+                                
+            </ul>
+        </div>
+        <div class="sm:w-1/2 h-auto sm:mt-0 mt-8">
+            <div class="text-base font-bold mb-2">Support</div>
+            <ul class="list-reset leading-normal">
+                <li class="hover:text-orange text-gray-600">Technical support</li>
+                <li class="hover:text-orange text-gray-600">Contact the organizers</li>
+                                
+            </ul>
+        </div>
+            <div class="sm:w-1/4 sm:mt-0 mt-8 h-auto">
+                <div class="text-base font-bold mb-2">Newsletter</div>
+                <p class="text-gray-600 leading-normal">Put yourself on the mailing list. </p>
+                <div class="mt-4 flex">
+                    <input type="text" class="p-2 border border-gray-200 round text-gray-700 text-sm h-auto" placeholder="Your email address">
+                    <button class="bg-gray-800 text-white rounded-sm h-auto text-xs p-3">Subscribe</button>
+                </div>
+            </div>
+        
+        </div>
+        </div> 
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            var max_fields      = 10;
+            var wrapper         = $(".container1");
+            var add_button      = $(".add_form_field");
+         
+            var x = 1;
+            $(add_button).click(function(e){
+                e.preventDefault();
+                if(x < max_fields){
+                    x++;
+                    $(wrapper).append('<div class="flex items-center my-2"><input type="text" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4  leading-tight focus:outline-none focus:bg-white" name="mytext[]"/><a href="#" class="delete" class="font-medium text-gray-600 hover:text-gray-800 focus:text-cool-gray-700"><svg class="svg-icon p-1 stroke-current w-8 -8 my-auto inline-block" viewBox="0 0 20 20"><path d="M10.185,1.417c-4.741,0-8.583,3.842-8.583,8.583c0,4.74,3.842,8.582,8.583,8.582S18.768,14.74,18.768,10C18.768,5.259,14.926,1.417,10.185,1.417 M10.185,17.68c-4.235,0-7.679-3.445-7.679-7.68c0-4.235,3.444-7.679,7.679-7.679S17.864,5.765,17.864,10C17.864,14.234,14.42,17.68,10.185,17.68 M10.824,10l2.842-2.844c0.178-0.176,0.178-0.46,0-0.637c-0.177-0.178-0.461-0.178-0.637,0l-2.844,2.841L7.341,6.52c-0.176-0.178-0.46-0.178-0.637,0c-0.178,0.176-0.178,0.461,0,0.637L9.546,10l-2.841,2.844c-0.178,0.176-0.178,0.461,0,0.637c0.178,0.178,0.459,0.178,0.637,0l2.844-2.841l2.844,2.841c0.178,0.178,0.459,0.178,0.637,0c0.178-0.176,0.178-0.461,0-0.637L10.824,10z"></path></svg></a></div>'); //add input box
+                }
+          else
+          {
+          alert('You Reached the limits')
+          }
+            });
+         
+            $(wrapper).on("click",".delete", function(e){
+                e.preventDefault(); $(this).parent('div').remove(); x--;
+            })
+        });
+        </script>
+
+</body>
+</html>

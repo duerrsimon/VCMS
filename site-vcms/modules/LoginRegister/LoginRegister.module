@@ -1,0 +1,1264 @@
+<?php namespace ProcessWire;
+
+/**
+ * ProcessWire Login and Register Process
+ *
+ * ProcessWire 3.x, Copyright 2017 by Ryan Cramer
+ * https://processwire.com
+ *
+ * CONFIGURATION PROPERTIES
+ * ------------------------
+ * @property bool $renderStyles Render <link> tags for stylesheets in output? 
+ * @property bool $renderScripts Render <script> tags for JS files in output?
+ * @property array $registerRoles Name of roles to add to users created from register form.
+ * @property array $registerFields Field names to show in registration form. 
+ * @property array $profileFields Field names to show in profile form. 
+ * @property array $features
+ *
+ * HOOKABLE METHODS
+ * ----------------
+ * @method string execute() All rendered output passes through this method. 
+ * 
+ * @method InputfieldForm buildLoginForm() Build the login form Inputfields.
+ * @method string renderLoginForm(InputfieldForm $form) Render the markup for the login form. 
+ * @method array buildLoginFormLinks() Returns an array of <a> tags for links that appear below the login form.
+ * @method bool processLoginForm(InputfieldForm $form) Process the login form and login (return true) or fail (return false). 
+ * 
+ * @method InputfieldForm buildRegisterForm() Build the user registration form Inputfields. 
+ * @method string renderRegisterForm(InputfieldForm $form) Render the markup for the user registration form. 
+ * @method bool processRegisterForm(InputfieldForm $form) Process the registration form. 
+ * 
+ * @method InputfieldForm buildConfirmationForm() Build the confirmation form. 
+ * @method string renderConfirmationForm(InputfieldForm $form) Render the output for the confirmation form. 
+ * @method bool processConfirmation() Process confirmation, and create user + log-in on success. WireException on fail.
+ * 
+ * @method InputfieldForm buildProfileForm() Build the profile edit form Inputfields. 
+ * @method string renderProfileForm(InputfieldForm $form) Render the markup for the profile edit form. 
+ * @method bool processProfileForm(InputfieldForm $form) Process the profile edit form. 
+ * 
+ * @method array buildLoggedInLinks() Return an array of <a> tags for links that appear to a user when logged in. 
+ * 
+ * @method void loginSuccess(User $user) Hook called on login success. 
+ * @method void loginFail($username) Hook called on login failure. 
+ * 
+ * @method void createUserReady(User $user) Hook called before a new user is created. 
+ * @method void createdUser(User $user) Hook called right after a new user is created. 
+ * 
+ * @method string renderList(array $items, $class = 'LoginRegisterLinks') Render a list, used primarily for links. 
+ * @method string renderError($error) Render an error message. 
+ * @method string renderMessage($message) Render an informational message. 
+ *
+ */
+
+class LoginRegister extends WireData implements Module, ConfigurableModule {
+
+	public static function getModuleInfo() {
+		return array(
+			'title' => 'Login/Register',
+			'summary' => 'Login or register for an account in ProcessWire',
+			'version' => 2,
+			'icon' => 'user-plus',
+		);
+	}
+
+	const defaultRoleName = 'login-register';
+
+	/**
+	 * Construct and establish default settings
+	 *
+	 */
+	public function __construct() {
+		$this->set('renderStyles', true);
+		$this->set('renderScripts', true);
+		$this->set('registerRoles', array(self::defaultRoleName));
+		$this->set('registerFields', array('name', 'email', 'pass'));
+		$this->set('profileFields', array('name', 'pass'));
+		$this->set('features', array('login', 'register', 'profile'));
+			
+		parent::__construct();
+	}
+
+	/**
+	 * Initialize default markup and classes for forms
+	 * 
+	 */
+	public function init() {
+		if($this->wire('page')->template == 'admin') return;
+		
+		$markup = array(
+			'list' => "<div {attrs}>{out}</div>",
+			'item' => "<div {attrs}>{out}</div>",
+			'item_label' => "<label class='InputfieldHeader' for='{for}'>{out}</label>",
+			'item_label_hidden' => "<label class='InputfieldHeader'><span>{out}</span></label>",
+			'item_content' => "<div class='InputfieldContent {class}'>{description}{out}{error}{notes}</div>",
+			'item_error' => "<div class='LoginRegisterError'><small>{out}</small></div>",
+			'item_description' => "<p class='description'>{out}</p>",
+			'item_notes' => "<p class='notes'><small>{out}</small></p>",
+			'success' => "<p class='LoginRegisterMessage'>{out}</p>",
+			'error' => "<p class='LoginRegisterError'>{out}</p>",
+			'item_icon' => "",
+			'item_toggle' => "",
+			'InputfieldFieldset' => array(
+				'item' => "<fieldset {attrs}>{out}</fieldset>",
+				'item_label' => "<legend>{out}</legend>",
+				'item_label_hidden' => "<legend style='display:none'>{out}</legend>",
+				'item_content' => "<div class='InputfieldContent'>{out}</div>",
+				'item_description' => "<p class='description'>{out}</p>",
+				'item_notes' => "<p class='notes'><small>{out}</small></p>",
+			)
+		);
+
+		$classes = array(
+			'form' => '', // 'InputfieldFormNoHeights',
+			'list' => 'Inputfields',
+			'list_clearfix' => 'pw-clearfix',
+			'item' => 'Inputfield Inputfield_{name} {class}',
+			'item_required' => 'InputfieldStateRequired',
+			'item_error' => 'InputfieldStateError',
+			'item_collapsed' => 'InputfieldStateCollapsed',
+			'item_column_width' => 'InputfieldColumnWidth',
+			'item_column_width_first' => 'InputfieldColumnWidthFirst',
+			'InputfieldFieldset' => array(
+				'item' => 'Inputfield_{name} {class}',
+			)
+		);
+
+		InputfieldWrapper::setMarkup($markup);
+		InputfieldWrapper::setClasses($classes);
+	}
+
+	/**
+	 * Allow the requested feature? (login, register, profile, login-email, forgot)
+	 * 
+	 * @param string $name
+	 * @return bool
+	 * 
+	 */
+	public function allowFeature($name) {
+		$allow = in_array($name, $this->features); 
+		if($allow && $name == 'forgot') $allow = $this->wire('modules')->isInstalled('ProcessForgotPassword'); 
+		return $allow;
+	}
+	
+	/**
+	 * Allow the given email address to be used for registration or change-of-email?
+	 *
+	 * @param string $email
+	 * @return bool
+	 *
+	 */
+	protected function allowEmail($email) {
+		$email = $this->wire('sanitizer')->email($email);
+		if(empty($email)) return false;
+		$email = $this->wire('sanitizer')->selectorValue($email);
+		if(empty($email)) return false;
+		$u = $this->wire('users')->get("email=$email, include=all");
+		if($u && $u->id) return false;
+		return true;
+	}
+
+	/**
+	 * Allow the given user name?
+	 *
+	 * @param string $name
+	 * @param string $reason When not allowed, the reason is populated to this string.
+	 * @return bool
+	 *
+	 */
+	protected function allowName($name, &$reason) {
+
+		$disallowedNames = array(
+			'admin',
+			'administrator',
+			'superuser',
+			'root',
+			'user',
+			'guest',
+		);
+
+		$nameOriginal = $name;
+		$name = $this->wire('sanitizer')->pageName($name);
+		$allow = false;
+
+		if(strlen($name) < 3) {
+			$reason = $this->_('User name must be 3+ characters in length');
+		} else if($name !== $nameOriginal) {
+			$reason = $this->_('User name does not validate, please try another.');
+		} else {
+			$u = $this->wire('users')->get("include=all, name=$name");
+			if($u && $u->id) {
+				$reason = $this->_('User name is already in use, please try another.');
+			} else {
+				$allow = true;
+			}
+		}
+
+		if($allow) {
+			foreach($disallowedNames as $disallowedName) {
+				if(strpos($disallowedName, $name) !== false) {
+					$reason = $this->_('Username is not allowed, please try another.');
+					$allow = false;
+					break;
+				}
+			}
+		}
+
+		return $allow;
+	}
+
+
+	/**
+	 * Get role specified in name, optionally in "roleName:id" format
+	 * 
+	 * @param string $name
+	 * @return Role|NullPage
+	 * 
+	 */
+	protected function getRole($name) {
+		list($name, $id) = strpos($name, ':') ? explode(':', $name) : array($name, 0);
+		$role = $this->wire('roles')->get($name); 
+		if((!$role || !$role->id) && $id) $role = $this->wire('roles')->get((int) $id); 
+		return $role;
+	}
+
+	/**
+	 * Convert an email address to a user name
+	 * 
+	 * @param string $email
+	 * @return string
+	 * 
+	 */
+	protected function emailToName($email) { 
+		$name = $this->wire('sanitizer')->pageName($email, Sanitizer::translate);
+		$length = strlen($name); 
+		$maxLength = 100;
+		if($length > $maxLength) {
+			$n = $length - 100;
+			$name = substr($name, 0, $maxLength) . "-$n";
+		}
+		return $name;
+	}
+
+	/**
+	 * Main login flow control, handles all input/output for this module
+	 *
+	 * @return string
+	 *
+	 */
+	public function ___execute() {
+
+		/** @var WireInput $input */
+		$input = $this->wire('input');
+		/** @var User $user */
+		$user = $this->wire('user');
+		/** @var Session $session */
+		$session = $this->wire('session');
+
+		$out = '';
+		$page = $this->wire('page');
+		$showLoginForm = false;
+
+		if($user->isLoggedin()) {
+			// user is already logged in 
+
+			if($input->get('logout')) {
+				$this->message($this->_('You have logged out'));
+				$session->logout();
+				$session->redirect($this->wire('page')->url() . '?logout=1');
+
+			} else if($input->get('profile') && $this->allowFeature('profile')) {
+				$profileForm = $this->buildProfileForm();
+				if($input->post('profile_submit')) {
+					$this->processProfileForm($profileForm); 
+				}
+				$out .= $this->renderProfileForm($profileForm); 
+
+			} else {
+				if($input->get('register_created')) {
+					$this->message($this->_('Thank you, your account is confirmed and you are now logged in'));
+				}
+				$this->message(sprintf($this->_('Welcome %s'), $user->fullname));
+			}
+			
+			$out .= $this->renderList($this->buildLoggedInLinks());
+
+		} else if($input->get('forgot') && $this->allowFeature('forgot')) {
+			// Forgot password
+			$process = $this->modules->get("ProcessForgotPassword");
+			/** @var ProcessForgotPassword $process */
+			$out = $process->execute();
+
+		} else if($input->get('register') && $this->allowFeature('register')) {
+			// Register
+			$registerForm = $this->buildRegisterForm();
+			if($input->post('register_submit')) {
+				if($this->processRegisterForm($registerForm)) {
+					$confirmationForm = $this->buildConfirmationForm();
+					$out = $this->renderConfirmationForm($confirmationForm);
+				} else {
+					$out = $this->renderRegisterForm($registerForm);
+				}
+			} else {
+				$out = $this->renderRegisterForm($registerForm);
+			}
+
+		} else if($input->get('register_confirm') && $this->allowFeature('register')) {
+			// Register confirm
+			try {
+				if($this->processConfirmation()) {
+					// redirect to main page as logged in user
+					$session->redirect($page->url . '?register_created=1');
+				} else {
+					// i.e. honeypot
+					$showLoginForm = true;
+				}
+			} catch(\Exception $e) {
+				$this->error($this->_('Unable to complete confirmation, please re-register and try again'));
+				$showLoginForm = true;
+			}
+
+		} else {
+			// Login or process login
+			$showLoginForm = true;
+		}
+
+		if($showLoginForm && $this->allowFeature('login')) {
+			$loginForm = $this->buildLoginForm();
+			if($input->post('login_submit')) {
+				if($this->processLoginForm($loginForm)) {
+					$session->redirect($page->url() . '?login=1');
+				}
+			}
+			$out = $this->renderLoginForm($loginForm);
+		}
+
+		return $this->wrapOutput($out);
+	}
+
+	/**
+	 * Build the list of links to show a logged in user
+	 * 
+	 * @return array
+	 * 
+	 */
+	protected function ___buildLoggedInLinks() {
+		$page = $this->wire('page');
+		$pages = $this->wire('pages');
+		$links = array();
+		
+		if(!$this->wire('input')->get('profile') && $this->allowFeature('profile')) {
+			$links['profile'] = "<a class='w-full focus:outline-none border border-transparent py-2 px-5 rounded-lg shadow-sm text-center block mt-4 text-white bg-cool-gray-700 hover:bg-cool-gray-800 font-medium' href='$page->url?profile=1'>" . $this->_('Edit profile') . "</a>";
+		}
+		$links['submissions'] = "<a href='".$pages->get('/')->httpUrl."edit-contribution' class='mt-4 w-full focus:outline-none border border-transparent py-2 px-5 rounded-lg shadow-sm text-center block mt-4 text-white bg-indigo-500 hover:bg-indigo-600 font-medium items-center' href='$page->url?logout=1'><svg fill='none' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' stroke='currentColor' viewBox='0 0 24 24' class='w-6 h-6 mr-2 inline-flex'><path d='M4 6h16M4 10h16M4 14h16M4 18h16'></path></svg><span>" . $this->_('View Submissions') . "</span></a>";
+		$links['new'] = "<a href='".$pages->get('/')->httpUrl."submit-contribution'  class='w-full focus:outline-none border border-transparent py-2 px-5 rounded-lg shadow-sm text-center block mt-4 text-white bg-indigo-500 hover:bg-indigo-600 font-medium items-center' href='$page->url?logout=1'>	<svg fill='none' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' stroke='currentColor' viewBox='0 0 24 24' class='w-6 h-6 mr-2  inline-flex'><path d='M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z'></path></svg><span>
+		" . $this->_('Submit new contribution') . "</span></a>";
+		$links['logout'] = "<a class='w-full mt-8 focus:outline-none border border-transparent py-2 px-5 rounded-lg shadow-sm text-center block mt-4 text-white bg-gray-500 hover:bg-gray-600 font-medium items-center' href='$page->url?logout=1'><svg fill='none' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' stroke='currentColor' viewBox='0 0 24 24' class='w-6 h-6 inline-flex'><path d='M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1'></path></svg> <span>" . $this->_('Logout') . "</span></a>";
+		return $links;
+	}
+
+	/**
+	 * Process the login form
+	 * 
+	 * @param InputfieldForm $form
+	 * @return bool
+	 * @throws WireException on CSRF validation fail
+	 * 
+	 */
+	protected function ___processLoginForm(InputfieldForm $form) {
+
+		/** @var Session $session */
+		$session = $this->wire('session');
+	
+		/** @var Sanitizer $sanitizer */
+		$sanitizer = $this->wire('sanitizer');
+		
+		$session->CSRF->validate();
+		$form->processInput($this->wire('input')->post);
+		
+		$nameIsEmail = $this->allowFeature('login-email');
+		$passField = $form->getChildByName('login_pass');
+		$nameField = $form->getChildByName('login_name');
+		$name = $nameField->attr('value');
+		$pass = $passField->attr('value');
+		
+		if(!$name || !$pass) return false;
+	
+		$name = $nameIsEmail ? $this->emailToName($name) : $sanitizer->pageName($name); 
+		$pass = substr($pass, 0, 128);
+		$user = $session->login($name, $pass);
+		
+		if((!$user || $user->name !== $name) && $nameIsEmail) {
+			// login failed, but login by email is supported
+			// attempt login a second time by finding user with email address and using their name
+			$user = null;
+			$email = $sanitizer->selectorValue($nameField->attr('value')); 
+			$matches = $this->wire('users')->find("include=all, email=$email"); 
+			$qty = $matches->count();
+			if($qty === 1) {
+				$user = $session->login($matches->first()->name, $pass);
+				$name = $user->name;
+			} else if($qty > 1) {
+				$this->error($this->_('Cannot login because more than one account uses this email address.'));
+			}
+		}
+		
+		if($user && $user->name === $name) {
+			// successful login
+			$this->loginSuccess($user);
+			$this->message(sprintf($this->_('Successful login for %s'), ($nameIsEmail ? $user->email : $user->name)));
+			return true;
+		} else {
+			// login failed
+			$this->loginFail($name);
+			$this->error($this->_("Login failed"));
+			$passField->attr('value', '');
+		}
+		
+		return false;
+	}
+		
+	/**
+	 * Build the login form
+	 *
+	 * @return InputfieldForm
+	 *
+	 */
+	protected function ___buildLoginForm() {
+
+		/** @var InputfieldForm $form */
+		$form = $this->modules->get('InputfieldForm');
+		$form->attr('id', 'LoginRegisterLoginForm');
+		//$form->description = $this->_('Login'); 
+
+		/** @var InputfieldText $nameField */
+		if($this->allowFeature('login-email')) {
+			$nameField = $this->modules->get('InputfieldEmail');
+			$nameField->set('label', $this->_('Email')); // Login form: email field label
+		} else {
+			$nameField = $this->modules->get('InputfieldText');
+			$nameField->set('label', $this->_('Username')); // Login form: username field label
+		}
+		$nameField->attr('id+name', 'login_name');
+		$nameField->attr('class', $this->className() . 'Name');
+		$nameField->collapsed = Inputfield::collapsedNever;
+		$nameField->required = true; 
+		$form->add($nameField);
+
+		/** @var InputfieldText $passField */
+		$passField = $this->modules->get('InputfieldText');
+		$passField->set('label', $this->_('Password')); // Login form: password field label
+		$passField->attr('id+name', 'login_pass');
+		$passField->attr('type', 'password');
+		$passField->attr('class', $this->className() . 'Pass');
+		$passField->collapsed = Inputfield::collapsedNever;
+		$passField->required = true; 
+		$form->add($passField);
+
+		/** @var InputfieldSubmit $submitField */
+		$submitField = $this->modules->get('InputfieldSubmit');
+		$submitField->attr('name', 'login_submit');
+		$submitField->attr('value', $this->_('Login')); // Login form: submit login button 
+		$submitField->appendMarkup = $this->wire('session')->CSRF->renderInput();
+		$form->add($submitField);
+
+		return $form;
+	}
+
+	/**
+	 * Render the login form
+	 *
+	 * @param InputfieldForm $form
+	 * @return string
+	 *
+	 */
+	protected function ___renderLoginForm(InputfieldForm $form) {
+		return $form->render() . $this->renderList($this->buildLoginFormLinks());
+	}
+
+	/**
+	 * Get the login alternative links that appear below login form
+	 * 
+	 * @return array
+	 * 
+	 */	
+	protected function ___buildLoginFormLinks() {
+		
+		$links = array();
+		$page = $this->wire('page');
+			
+		if($this->allowFeature('forgot')) {
+			$links['forgot'] = "<a class='text-xs text-gray-500' href='$page->url?forgot=1'>" . $this->_("Forgot your password?") . "</a>"; 
+		}
+		
+		if($this->allowFeature('register')) {
+			date_default_timezone_set('UTC');
+
+				$signup_deadline=$this->pages->get("/settings/")->signup_deadline;
+				if ( strtotime("now")<$signup_deadline){
+					$links['register']  = "<div class=\"mt-4 flex items-center justify-between\">
+					<span class=\"border-b w-1/5 md:w-1/4\"></span>
+					<a href=\"#\" class=\"text-xs text-gray-500 uppercase\">or register</a>
+					<span class=\"border-b w-1/5 md:w-1/4\"></span>
+					</div>
+					<div class=\"mt-4 w-full\">
+					<a href='./?register=1' class='w-full block focus:outline-none border border-transparent py-2 px-5 rounded-lg shadow-sm text-center text-white bg-gray-500 hover:bg-gray-600 font-medium'>" . $this->_("Register for an account") . "</a>
+					
+					</div>";
+					$links['register'].="<span class='text-sm text-gray-700 mt-2 inline-block'>Registration Deadline: ".date("d.m.Y H:i e", $signup_deadline)."</span>";
+				}
+				if (strtotime("now")>$signup_deadline){ 
+					
+					$links['register'] = "<div class='mt-4 bg-red-100 border-l-2 border-r-2 border-red-500 text-xs mb-2 text-red-800 p-4'>The registration deadline was: ".date("d.m.Y H:i e", $signup_deadline).". Registration no longer possible.</div>";
+				}
+
+
+			
+		}
+		
+		if($this->wire('modules')->isInstalled('LoginFacebook')) {
+			$p = $this->wire('pages')->get('template=login-facebook'); 
+			if($p->id) {
+				$links['facebook'] = "<a href='$p->url'>" . $this->_('Login with Facebook') . "</a>";
+			}
+		}
+	
+		return $links;
+	}
+
+	/**
+	 * Build the registration form
+	 * 
+	 * @return InputfieldForm
+	 * 
+	 */
+	protected function ___buildRegisterForm() {
+		
+		$userTemplate = $this->wire('templates')->get('user');
+		$registerFields = $this->registerFields;
+		
+		/** @var InputfieldForm $form */
+		$form = $this->modules->get('InputfieldForm');
+
+	
+
+
+		$form->attr('id', 'LoginRegisterForm');
+		$form->attr('method', 'post');
+		$m = $this->modules->get("InputfieldMarkup");
+		$m->markupText = '<div class="my-4 flex items-center justify-between">
+		<span class="border-b w-1/5 lg:w-1/4"></span>
+		<a href="#" class="text-xs text-center text-gray-500 uppercase">'._('Register with e-mail').'</a>
+		<span class="border-b w-1/5 lg:w-1/4"></span>
+	</div> ';
+		$form->add($m);
+		$form->attr('action', $this->wire('page')->url() . '?register=1'); 
+		
+
+	
+
+
+		if(!$this->allowFeature('login-email')) {
+			/** @var InputfieldText $f */
+			$f = $this->modules->get('InputfieldText');
+			$f->attr('id+name', 'register_name');
+			$f->label = $this->_('Login name');
+			$f->attr('class', 'my-4');
+
+			$f->description = $this->_('Use letters, numbers, hyphens or underscores. No spaces.');
+			$f->required = true;
+			$f->attr('required', 'required');
+			$form->add($f);
+		}
+		
+		if(!in_array('email', $registerFields)) $registerFields[] = 'email';
+		if(!in_array('pass', $registerFields)) $registerFields[] = 'pass';
+		$nullPage = new NullPage();
+		$this->wire($nullPage);
+
+		foreach($registerFields as $fieldName) {
+			if($fieldName == 'roles') continue;
+			$field = $userTemplate->fieldgroup->getFieldContext($fieldName);
+			if(!$field) continue;
+			$inputfield = $field->getInputfield($nullPage);
+			$inputfield->attr('id+name', 'register_' . $inputfield->attr('name'));
+			if($fieldName == 'email' || $fieldName == 'pass') $inputfield->required = true;
+			if($inputfield->required && $inputfield instanceof InputfieldText) {
+				$inputfield->attr('required', 'required');
+			}
+			$form->add($inputfield); 
+		}
+
+		// honeypot
+		/** @var InputfieldTextarea $f */
+		$f = $this->modules->get('InputfieldTextarea');
+		$f->attr('id+name', 'register_comment');
+		$f->label = $this->_('Comment');
+		$f->wrapAttr('style', 'display:none');
+		$form->add($f); 
+
+		date_default_timezone_set('UTC');
+
+		
+		/** @var InputfieldSubmit $f */
+		$f = $this->modules->get('InputfieldSubmit');
+		$f->attr('id+name', 'register_submit');
+		$f->attr('value', $this->_('Register'));
+		$f->appendMarkup = $this->wire('session')->CSRF->renderInput();
+		$signup_deadline=$this->pages->get("/settings/")->signup_deadline;
+		if ( strtotime("now")>$signup_deadline){
+			$f->attr('disabled', true);
+			$f->appendMarkup("<span>Registration Deadline: ".date("d.m.Y H:i e", $signup_deadline)."</span>");
+		}
+
+		$form->add($f);
+	
+		return $form;
+	}
+
+	/**
+	 * Render/output the registration form
+	 * 
+	 * @param InputfieldForm $form
+	 * @return string
+	 * 
+	 */
+	protected function ___renderRegisterForm(InputfieldForm $form) {
+		return $form->render();
+	}
+
+	/**
+	 * Process the registration form
+	 * 
+	 * @param InputfieldForm $form
+	 * @return bool
+	 * @throws WireException on CSRF validation fail
+	 * 
+	 */
+	protected function ___processRegisterForm(InputfieldForm $form) {
+		
+		/** @var Session $session */
+		$session = $this->wire('session');
+	
+		/** @var Sanitizer $sanitizer */
+		$sanitizer = $this->wire('sanitizer');
+	
+		$session->CSRF->validate();
+		$form->processInput($this->wire('input')->post);
+		
+		$emailInUseError = $this->_('Email address is already in use, please use another.');
+		
+		// check if honeypot is populated
+		$honeypotField = $form->getChildByName('register_comment');
+		$honeypot = $honeypotField->attr('value');
+		if(strlen($honeypot)) return false;
+		
+		// get requested password
+		$passField = $form->getChildByName('register_pass');
+		$pass = $passField->attr('value');
+
+		// validate email
+		$emailField = $form->getChildByName('register_email');
+		$email = $sanitizer->email($emailField->attr('value'));
+		if(strlen($email) && !$this->allowEmail($email)) {
+			$emailField->error($emailInUseError); 
+			$emailField->attr('value', '');
+		}
+
+		// validate requested user name
+		$error = '';
+		if($this->allowFeature('login-email')) {
+			$name = $this->emailToName($emailField->attr('value'));
+			if(!$this->allowName($name, $error)) $emailField->error($emailInUseError);
+		} else {
+			$nameField = $form->getChildByName('register_name');
+			$name = $nameField->attr('value');
+			if(!$this->allowName($name, $error)) $nameField->error($error);
+		}
+		
+		$errors = $form->getErrors();
+		
+		if(!count($errors) && $name && $pass && $email) {
+			// if there were no errors 
+			$session->setFor($this, 'register_name', $name); 
+			foreach($form->getAll() as $f) {
+				$name = $f->attr('name');
+				if($name == 'register_submit') continue;
+				if(strpos($name, 'register_') !== 0) continue;
+				$session->setFor($this, $name, $f->attr('value'));
+			}
+			$code = $this->createConfirmationCode();
+			$this->sendConfirmationEmail($email, $code); 
+			return true;	
+		} else {
+			// there were errors and the form will be displayed again
+			foreach($errors as $error) $this->error($error);
+		}
+		
+		return false;
+	}
+
+	/**
+	 * Create a code for confirmation of account creation
+	 * 
+	 * Also adds it to the session for later retrieval via 'confirm_code'
+	 * 
+	 * @return string
+	 * 
+	 */
+	protected function createConfirmationCode() {
+		$pw = new Password();
+		$code = $pw->randomBase64String(40);
+		$this->wire('session')->setFor($this, 'confirm_code', $code); 
+		return $code; 
+	}
+
+	/**
+	 * Send an email with a confirmation code they have to click on (or paste in)
+	 * 
+	 * @param string $email
+	 * @param string $confirmCode
+	 * @return int 1 on success 0 on fail
+	 * 
+	 */
+	protected function sendConfirmationEmail($email, $confirmCode) {
+		
+		$config = $this->wire('config');
+		$confirmURL = $this->wire('page')->httpUrl() . "?register_confirm=" . urlencode($confirmCode);
+		
+		$mail = new WireMail();
+		$mail->subject(sprintf($this->_('Confirm account at %s'), $config->httpHost)); 
+		$mail->to($email);
+		
+		$body = "<p>" . sprintf(
+			$this->_('Please click the link below to confirm the account you requested at %s'), $config->httpHost
+		) . "</p>\n\n<p>" . $this->_('Confirmation code:') . " $confirmCode</p>";
+		
+		$mail->body(strip_tags($body) . "\n\n$confirmURL");
+		$mail->bodyHTML($body . "<p><a href='$confirmURL'>" . $this->_('Click to confirm') . "</a></p>"); 
+		
+		return $mail->send();
+	}
+
+	/**
+	 * Build the form where user can paste and submit a confirmation code
+	 * 
+	 * This form is displayed after a successful registration form submission, but
+	 * is only submitteed if user opts not to click the link in their email. 
+	 * 
+	 * @return InputfieldForm
+	 * 
+	 */
+	protected function ___buildConfirmationForm() {
+		
+		/** @var InputfieldForm $form */
+		$form = $this->modules->get('InputfieldForm');
+		$form->attr('id', 'LoginRegisterConfirmationForm'); 
+		$form->attr('method', 'get');
+		$form->attr('action', $this->wire('page')->url());
+	
+		$form->description = 
+			$this->_('Thank you, a confirmation code has been emailed to you.') . ' ' .
+			$this->_('When you receive the email, click the link it contains, or paste the confirmation code below.');
+
+		/** @var InputfieldText $f */
+		$f = $this->modules->get('InputfieldText');
+		$f->attr('id+name', 'register_confirm');
+		$f->label = $this->_('Confirmation code');
+		$f->attr('required', 'required');
+		$form->add($f);
+
+		/** @var InputfieldSubmit $f */
+		$f = $this->modules->get('InputfieldSubmit');
+		$f->attr('name', 'confirm_submit');
+		$form->add($f);
+		
+		return $form;
+	}
+
+	/**
+	 * Render the confirmation form
+	 * 
+	 * @param InputfieldForm $form
+	 * @return string
+	 * 
+	 */
+	protected function ___renderConfirmationForm(InputfieldForm $form) {
+		return $form->render();
+	}
+
+	/**
+	 * Process the confirmation, create new user and log them in
+	 * 
+	 * This can be triggered by a URL clicked in an email, or by submission of the confirmation form. 
+	 * 
+	 * @return bool False if no code is present in URL
+	 * @throws WireException Throws this exception for most error conditions
+	 * 
+	 */
+	protected function ___processConfirmation() {
+		
+		$input = $this->wire('input');
+		$session = $this->wire('session');
+		$users = $this->wire('users');
+		$code = $input->get('register_confirm');
+		
+		if(empty($code)) return false;
+		
+		// validate that the code in the session is the same one present in the URL
+		if($session->getFor($this, 'confirm_code') !== $code) throw new WireException('Invalid confirmation code'); 
+	
+		// get all values previously stored in session 
+		$values = $session->getFor($this, '');
+		
+		// check if email is now in use
+		if(!$this->allowEmail($values['register_email'])) {
+			throw new WireException('Email address already taken');
+		}
+		
+		$error = '';
+		if(!$this->allowName($values['register_name'], $error)) {
+			throw new WireException('Unable to complete registration - ' . $error); 
+		}
+
+		$user = $users->newUser();
+		
+		// populate values to new user
+		foreach($values as $key => $value) {
+			if(strpos($key, 'register_') !== 0) continue;
+			$key = str_replace('register_', '', $key); 
+			if($key == 'roles') continue; // don't allow this, just in case
+			if($key != 'name' && !$user->template->fieldgroup->hasField($key)) continue;
+			$user->set($key, $value); 
+		}
+	
+		// add role to user if defined
+		foreach($this->registerRoles as $roleName) {
+			$role = $this->getRole($roleName); 
+			if($role->id && !$role->hasPermission('page-edit')) {
+				$user->addRole($role);
+			}
+		}
+	
+		// create the user
+		try {
+			$this->createUserReady($user);
+			$user->save();
+		} catch(\Exception $e) {
+			throw new WireException('Unable to create user');
+		}
+		//bdump($this->pages->get('/settings/'));
+		//bdump($wire("pages")->get('/settings/'));
+		if ($this->wire("pages")->get('/settings/')->use_newsletter) {
+			$mc = $this->wire("modules")->get("SubscribeToMailchimp");
+			$status=$mc->subscribe($user->email);
+			if (!$status) {
+				throw new WireException('Could not subscribe user to mailchimp: ' . $u->name); 
+			}
+		}
+		
+		// login the newly created user
+		$u = $session->login($user->name, $values['register_pass']);
+		
+		if($u && $u->id) {
+			
+			// trigger created user hook
+			$this->createdUser($user); 
+			
+			// trigger login success hook
+			$this->loginSuccess($user);
+			
+			// remove session data
+			$session->removeFor($this, true); 
+			
+			return true;
+			
+		} else {
+			throw new WireException('Unable to login created user: ' . $u->name); 
+		}
+	}
+	
+	/**
+	 * Build the profile edit form
+	 *
+	 * @return InputfieldForm
+	 *
+	 */
+	protected function ___buildProfileForm() {
+		
+		$user = $this->wire('user');
+		$of = $user->of();
+		$user->of(false);
+		$userTemplate = $this->wire('templates')->get('user');
+
+		/** @var InputfieldForm $form */
+		$form = $this->modules->get('InputfieldForm');
+		$form->attr('id', 'LoginRegisterProfileForm');
+		$form->attr('method', 'post');
+		$form->attr('action', $this->wire('page')->url() . '?profile=1');
+		$m = $this->modules->get("InputfieldMarkup");
+		$m->markupText = '<div class="my-4 flex items-center justify-between">
+		<span class="border-b w-1/5 lg:w-1/4"></span>
+		<span class="text-xs text-center text-gray-500 uppercase">'._('Edit profile').'</span>
+		<span class="border-b w-1/5 lg:w-1/4"></span>
+	</div> ';
+		$form->add($m);
+		
+		
+		$profileFields = $this->profileFields;
+		if(!in_array('email', $profileFields)) $profileFields[] = 'email';
+		if(!in_array('pass', $profileFields)) $profileFields[] = 'pass';
+		
+		foreach($profileFields as $fieldName) {
+			if($fieldName == 'roles') continue;
+			$field = $userTemplate->fieldgroup->getFieldContext($fieldName); 
+			if(!$field) continue;
+			$inputfield = $user->getInputfield($field); 
+			if(!$inputfield) continue;
+			if($fieldName == 'email') $inputfield->attr('required', 'required');
+			$inputfield->attr('name', 'profile_' . $inputfield->attr('name'));
+			$form->add($inputfield);
+		}
+		
+		/** @var InputfieldSubmit $f */
+		$f = $this->modules->get('InputfieldSubmit');
+		$f->attr('id+name', 'profile_submit');
+		$f->appendMarkup = $this->wire('session')->CSRF->renderInput();
+		$form->add($f);
+		
+		if($of) $user->of(true);
+
+		return $form;
+	}
+
+	/**
+	 * Render the profile edit form
+	 * 
+	 * @param InputfieldForm $form
+	 * @return string
+	 * 
+	 */
+	protected function ___renderProfileForm(InputfieldForm $form) {
+		return $form->render();
+	}
+
+	/**
+	 * Process the profile edit form and save user
+	 * 
+	 * @param InputfieldForm $form
+	 * @return bool
+	 * 
+	 */
+	protected function ___processProfileForm(InputfieldForm $form) {
+		
+		/** @var Session $session */
+		$session = $this->wire('session');
+	
+		/** @var User $user */
+		$user = $this->wire('user');
+		
+		/** @var Sanitizer $sanitizer */
+		$sanitizer = $this->wire('sanitizer');
+
+		$session->CSRF->validate();
+		$form->processInput($this->wire('input')->post); 
+		
+		$of = $user->of();
+		$user->of(false);
+		$user->resetTrackChanges();
+		$message = $this->_('Updated: %s'); 
+	
+		// password
+		$passField = $form->getChildByName('profile_pass');	
+		$pass = $passField->val();
+		if(strlen($pass)) {
+			$user->set('pass', $pass); 
+			$this->message(sprintf($message, $passField->label)); 
+		}
+	
+		// email
+		$emailField = $form->getChildByName('profile_email');
+		if(strtolower($emailField->val()) != strtolower($user->email)) {
+			$email = $sanitizer->email($emailField->val());
+			if(strlen($email)) {
+				if($this->allowEmail($email)) {
+					// email changed allowed
+					if($this->allowFeature('login-email')) {
+						// update name to be consistent with email
+						$name = $this->emailToName($email);
+						$reason = '';
+						if(!$this->allowName($name, $reason)) {
+							$emailField->error($this->_('Unable to change to new email address') . " ($reason)"); 
+							$emailField->val($user->email);
+							$email = '';
+						}
+					}
+					if(strlen($email)) {
+						$user->set('email', $email);
+						$this->message(sprintf($message, $emailField->label));
+					}
+				} else {
+					// email is in use
+					$emailField->error($this->_('Email address was already in use, so changed back to previous.'));
+					$emailField->val($user->email); 
+				}
+			}
+		}
+	
+		// all other form fields
+		foreach($form->getAll() as $f) {
+			$name = str_replace('profile_', '', $f->attr('name'));
+			if($name == 'pass' || $name == 'submit' || $name == 'roles' || $name == 'email') continue;
+			$value = $f->val();
+			if($user->hasField($name) && $user->get($name) != $value) {
+				$user->set($name, $value); 
+				$this->message(sprintf($message, $f->label)); 
+			}
+		}
+		
+		$errors = $form->getErrors();
+		
+		if(!count($errors)) {
+			if($user->isChanged()) {
+				$user->save();
+				$this->message($this->_('Saved profile'));
+			}
+		}
+		
+		if($of) $user->of(true);
+		
+		foreach($errors as $error) $this->error($error);
+		
+		return true;
+	}
+	
+	/**
+	 * Wrap all LoginRegister output and add errors, messages, scripts, styles, etc. 
+	 * 
+	 * @param string $out
+	 * @return string
+	 * 
+	 */
+	protected function wrapOutput($out) {
+		
+		$o = '';
+		$config = $this->wire('config');
+		
+		if($this->renderStyles) {
+			$styles = $config->styles;
+			$styles->add($config->urls($this->className()) . $this->className() . '.css'); 
+			foreach($this->wire('config')->styles as $file) {
+				$o .= "<link rel='stylesheet' type='text/css' href='$file' />";
+			}
+		}
+		
+		foreach($this->errors('array') as $error) {
+			$o .= $this->renderError($error);
+		}
+		
+		foreach($this->messages('array') as $message) {
+			$o .= $this->renderMessage($message);
+		}
+		
+		if($this->renderScripts) {
+			foreach($config->scripts as $file) {
+				if(strpos($file, 'JqueryCore.js') !== false) {
+					$out .= "<script>if(typeof jQuery == 'undefined') " . 
+						"document.write('<scr' + 'ipt src=\"$file\"></scr' + 'ipt>');</script>";
+				} else {
+					$out .= "<script src='$file'></script>";
+				}
+			}
+		}
+		
+		return "<div id='LoginRegister'>$o$out</div>";
+	}
+	
+	/**
+	 * Render a list (used primary for lists of links)
+	 *
+	 * @param array $items Associative array where key is name and value is HTML content of list item
+	 * @param string $class Class to use for the list, and as prefix for items
+	 * @return string
+	 *
+	 */
+	protected function ___renderList(array $items, $class = 'LoginRegisterLinks') {
+		$out = '';
+		foreach($items as $name => $item) {
+			$c = $class . ucfirst($name);
+			$out .= "<li class='$c'>$item</li>";
+		}
+		if($out) $out = "<ul class='$class'>$out</ul>";
+		return $out;
+	}
+
+
+	/**
+	 * Render an error message in markup
+	 * 
+	 * @param string $error Error message (not entity encoded)
+	 * @return string HTML
+	 * 
+	 */
+	protected function ___renderError($error) {
+		return "<p class='LoginRegisterError'>" . $this->wire('sanitizer')->entities($error) . "</p>";
+	}
+
+	/**
+	 * Render an informational message in markup
+	 *
+	 * @param string $message Message (not entity encoded)
+	 * @return string HTML
+	 *
+	 */
+	protected function ___renderMessage($message) {
+		return "<p class='LoginRegisterMessage'>" . $this->wire('sanitizer')->entities($message) . "</p>";
+	}
+	
+	/**
+	 * Hook called after successful login
+	 *
+	 * @param User $user
+	 *
+	 */
+	protected function ___loginSuccess(User $user) { }
+
+	/**
+	 * Hook called after login failure
+	 *
+	 * @param string $name
+	 *
+	 */
+	protected function ___loginFail($name) { }
+
+
+	/**
+	 * Hook called when User is about to be created
+	 * 
+	 * @param User $user
+	 * 
+	 */
+	protected function ___createUserReady(User $user) { }
+
+	/**
+	 * Hook called after user is created
+	 *
+	 * @param User $user
+	 *
+	 */
+	protected function ___createdUser(User $user) { }
+
+	/**
+	 * Install the module and add a login-register role
+	 * 
+	 */
+	public function ___install() {
+		/** @var Roles $roles */
+		$roles = $this->wire('roles');
+		$role = $roles->get(self::defaultRoleName); 
+		if(!$role->id) {
+			$role = $roles->add(self::defaultRoleName);
+			if($role->id) $this->message("Added role: $role->name");
+		}
+	}
+
+	/**
+	 * Module configuration
+	 * 
+	 * @param InputfieldWrapper $inputfields
+	 * 
+	 */
+	public function getModuleConfigInputfields(InputfieldWrapper $inputfields) {
+
+		$hasForgot = $this->modules->isInstalled('ProcessForgotPassword'); 
+		
+		/** @var InputfieldCheckboxes $f */
+		$f = $this->modules->get('InputfieldCheckboxes'); 
+		$f->attr('name', 'features'); 
+		$f->label = $this->_('Features to use'); 
+		$f->icon = 'sliders';
+		$f->addOption('login', $this->_('Login form')); 
+		$f->addOption('register', $this->_('New user registration form')); 
+		$f->addOption('profile', $this->_('Edit profile form (for logged-in users)'));
+		$f->addOption('login-email', $this->_('Use email address for login rather than user name'));
+		$f->addOption('forgot', $this->_('Forgot password reset') . ($hasForgot ? '' : '*')); 
+		$f->attr('value', $this->features);
+		if(!$hasForgot) $f->notes = 
+			$this->_('*Requires core “ProcessForgotPassword” module') . ' - [' .
+			$this->_('Click to install') . '](./installConfirm?name=ProcessForgotPassword)';
+		$inputfields->add($f); 
+	
+		/** @var InputfieldAsmSelect $f */
+		$f = $this->modules->get('InputfieldAsmSelect'); 
+		$f->attr('name', 'registerFields'); 
+		$f->label = $this->_('Registration form fields'); 
+		$f->description = 
+			$this->_('If you do not see all the fields you need, add them to the “user” template first and then come back here.') . ' ' . 
+			$this->_('Only standard fields may be used on the front-end (no files, repeaters, richtext, multi-value, combined fields, etc.).');
+		$f->showIf = 'features=register';
+		$f->icon = 'address-book-o';
+		foreach($this->wire('templates')->get('user')->fieldgroup as $field) {
+			if($field->name == 'roles') continue;
+			$label = $field->getLabel();
+			if($field->name == 'email' || $field->name == 'pass') $label .= ' ' . $this->_('(required)'); 
+			$f->addOption($field->name, $label);
+		}
+		$f2 = clone $f;
+		$value = $this->registerFields;
+		if(!in_array('email', $value)) $value[] = 'email';
+		if(!in_array('pass', $value)) $value[] = 'pass';
+		$f->attr('value', $value); 
+		$inputfields->add($f);
+	
+		/** @var InputfieldAsmSelect $f2 */
+		$f2->attr('name', 'profileFields');
+		$f2->label = $this->_('Profile form fields');
+		$f2->showIf = 'features=profile';
+		$f2->icon = 'address-card-o';
+		$value = $this->profileFields;
+		if(!in_array('email', $value)) $value[] = 'email';
+		if(!in_array('pass', $value)) $value[] = 'pass';
+		$f2->attr('value', $value); 
+		$inputfields->add($f2);
+	
+		/** @var InputfieldCheckboxes $f */
+		$f = $this->modules->get('InputfieldCheckboxes'); 
+		$f->attr('name', 'registerRoles'); 
+		$f->label = $this->_('Roles to add to newly registered users'); 
+		$f->notes = $this->_('The “guest” role is assumed. Roles with page-edit permission are not shown.'); 
+		$f->showIf = 'features=register';
+		$f->icon = 'gears';
+		$value = array();
+		foreach($this->wire('roles') as $role) {
+			if($role->name == 'guest' || $role->name == 'superuser') continue; 
+			if($role->hasPermission('page-edit')) continue; 
+			$option = "$role->name:$role->id";
+			$f->addOption($option, $role->name); 
+			if(in_array($option, $this->registerRoles) || in_array($role->name, $this->registerRoles)) $value[] = $option;
+		}
+		$f->attr('value', $value); 
+		$inputfields->add($f); 
+	
+		/** @var InputfieldMarkup $f */
+		$f = $this->modules->get('InputfieldMarkup'); 
+		$f->attr('name', '_docs');
+		$f->label = $this->_('How to use + documentation'); 
+		$f->icon = 'bookmark-o';
+		$f->collapsed = Inputfield::collapsedYes;
+		if($this->wire('adminTheme') instanceof AdminThemeFramework) {
+			$f->value = $this->wire('sanitizer')->entitiesMarkdown(file_get_contents(__DIR__ . '/README.md'), true);
+		} else {
+			$f->description = 
+				$this->_('Place the following where you want the login/register/profile output to go in your template file.') . ' ' . 
+				$this->_('It should ideally be placed in a main/bodycopy area.'); 
+			$f->value = '<pre><code>&lt;?php echo $modules->get("LoginRegister")->execute(); ?&gt;</code></pre>';
+			$f->notes = sprintf(
+				$this->_('See the [full documentation](%s) for more details.'), 
+				'https://github.com/ryancramerdesign/LoginRegister/blob/master/README.md'
+			);
+		}
+		$inputfields->add($f);
+		
+	}
+	
+}
+

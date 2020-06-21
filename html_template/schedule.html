@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VCMS</title>
+    <link rel="stylesheet" href="fonts/inter.css">
+    <link rel="stylesheet" href="css/tailwind.min.css">
+    <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.0.1/dist/alpine.js" defer></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+	 <!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.1/css/select2.min.css" rel="stylesheet" />  -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.1/js/select2.min.js"></script>
+    <script src="node_modules/moment/min/moment-with-locales.min.js"></script>
+<script src="node_modules/moment-timezone/builds/moment-timezone-with-data-10-year-range.min.js"></script>
+</head>
+<body>
+    <div>
+      <nav x-data="{ open: false }" @keydown.window.escape="open = false" class="bg-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="flex items-center justify-between h-16">
+            <div class="flex items-center">
+              <div class="flex-shrink-0">
+                <img class="h-8 w-8" src="img/logo.svg" alt="VCMS logo" />
+              </div>
+              <div class="hidden md:block">
+                <div class="ml-10 flex items-baseline">
+                  <a href="index.html" class=" px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700">Home</a>
+                  <a href="schedule.html" class="ml-4 px-3 py-2 rounded-md text-sm font-medium text-white bg-gray-900 focus:outline-none focus:text-white focus:bg-gray-700">Schedule</a>
+
+                  <a href="speakers.html" class="ml-4 px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700">Speakers</a>
+                  <a href="posters.html" class="ml-4 px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700">Posters</a>
+
+                  <a href="faq.html" class="ml-4 px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700">FAQ</a>
+                  <a href="about.html" class="ml-4 px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700">About</a>
+
+                </div>
+              </div>
+            </div>
+            <div class="hidden md:block">
+              <div class="ml-4 flex items-center md:ml-6">
+                  <div @click.away="open = false" class="ml-3 relative" x-data="{ open: false }">
+                      <div>
+                          <button @click="open = !open" class="p-1 border-2 border-transparent text-gray-400 rounded-full hover:text-white focus:outline-none focus:text-white focus:bg-gray-700" aria-label="Notifications" aria-haspopup="true" x-bind:aria-expanded="open">
+                              <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                              </svg>
+                            </button>
+                      </div>
+                      <div x-show="open" x-transition:enter="transition ease-out duration-100" x-transition:enter-start="transform opacity-0 scale-95" x-transition:enter-end="transform opacity-100 scale-100" x-transition:leave="transition ease-in duration-75" x-transition:leave-start="transform opacity-100 scale-100" x-transition:leave-end="transform opacity-0 scale-95" class="origin-top-right absolute right-0 mt-2 w-64 rounded-md shadow-lg z-50">
+                        <div class="rounded-md bg-white shadow-xs z-50">
+                          <!-- <p class="text-sm p-4">You have 0 comments</p> -->
+                          <div class="flex text-sm max-w-md bg-white shadow-lg  overflow-hidden">
+                              <div class="w-2 bg-green-500"></div>
+                              <div class="flex items-center px-2 py-3">
+                                 <div class="mx-3">
+                                  <h2 class="font-semibold text-gray-800">New Comment</h2>
+                                  <p class="text-gray-600">John Doe commented on your <a href="#" class="text-blue-500">Poster</a>.</p>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="flex text-sm max-w-md bg-white shadow-lg overflow-hidden">
+                              <div class="w-2 bg-blue-500"></div>
+                              <div class="flex items-center px-2 py-3">
+                                 <div class="mx-3">
+                                  <h2 class="font-semibold text-gray-800">New Like</h2>
+                                  <p class="text-gray-600">You have a new like on your <a href="#" class="text-blue-500">Poster</a>.</p>
+                                </div>
+                              </div>
+                            </div>
+                        </div>
+                      </div>
+                    </div>  
+               
+                <div @click.away="open = false" class="ml-3 relative" x-data="{ open: false }">
+                  <div>
+                    <button @click="open = !open" class="max-w-xs flex items-center text-sm rounded-full text-gray-400 rounded-full hover:text-white focus:outline-none focus:text-white" id="user-menu" aria-label="User menu" aria-haspopup="true" x-bind:aria-expanded="open">
+                     
+                      <svg class="svg-icon h-6 w-6 stroke-1 stroke-current" viewBox="0 0 20 20">
+                        <path fill="none" d="M10,10.9c2.373,0,4.303-1.932,4.303-4.306c0-2.372-1.93-4.302-4.303-4.302S5.696,4.223,5.696,6.594C5.696,8.969,7.627,10.9,10,10.9z M10,3.331c1.801,0,3.266,1.463,3.266,3.263c0,1.802-1.465,3.267-3.266,3.267c-1.8,0-3.265-1.465-3.265-3.267C6.735,4.794,8.2,3.331,10,3.331z"></path>
+                        <path fill="none" d="M10,12.503c-4.418,0-7.878,2.058-7.878,4.685c0,0.288,0.231,0.52,0.52,0.52c0.287,0,0.519-0.231,0.519-0.52c0-1.976,3.132-3.646,6.84-3.646c3.707,0,6.838,1.671,6.838,3.646c0,0.288,0.234,0.52,0.521,0.52s0.52-0.231,0.52-0.52C17.879,14.561,14.418,12.503,10,12.503z"></path>
+                      </svg>
+                    </button>
+                  </div>
+                  <div x-show="open" x-transition:enter="transition ease-out duration-100" x-transition:enter-start="transform opacity-0 scale-95" x-transition:enter-end="transform opacity-100 scale-100" x-transition:leave="transition ease-in duration-75" x-transition:leave-start="transform opacity-100 scale-100" x-transition:leave-end="transform opacity-0 scale-95" class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg z-50">
+                    <div class="py-1 rounded-md bg-white shadow-xs">
+                      <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Your Profile</a>
+                      <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Submissions</a>
+                      <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Sign out</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="-mr-2 flex md:hidden">
+              <button @click="open = !open" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:bg-gray-700 focus:text-white" x-bind:aria-label="open ? 'Close main menu' : 'Main menu'" x-bind:aria-expanded="open">
+                <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                  <path :class="{'hidden': open, 'inline-flex': !open }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                  <path :class="{'hidden': !open, 'inline-flex': open }" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div :class="{'block': open, 'hidden': !open}" class="hidden md:hidden">
+          <div class="px-2 pt-2 pb-3 sm:px-3">
+            <a href="index.html" class="mt-1 block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700">Home</a>
+            <a href="schedule.html" class="block px-3 py-2 rounded-md text-base font-medium text-white bg-gray-900 focus:outline-none focus:text-white focus:bg-gray-700">Schedule</a>
+            <a href="speakers.html" class="mt-1 block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700">Speakers</a>
+            <a href="posters.html" class="mt-1 block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700">Posters</a>
+            <a href="faq.html" class="mt-1 block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700">FAQ</a>
+            <a href="about.html" class="mt-1 block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700">About</a>
+          </div>
+          <div class="pt-4 pb-3 border-t border-gray-700">
+            <div class="flex items-center px-5">
+              <div class="flex-shrink-0">
+                <svg class="svg-icon h-10 w-10 stroke-1 stroke-current text-cool-gray-100" viewBox="0 0 20 20">
+                  <path fill="none" d="M10,10.9c2.373,0,4.303-1.932,4.303-4.306c0-2.372-1.93-4.302-4.303-4.302S5.696,4.223,5.696,6.594C5.696,8.969,7.627,10.9,10,10.9z M10,3.331c1.801,0,3.266,1.463,3.266,3.263c0,1.802-1.465,3.267-3.266,3.267c-1.8,0-3.265-1.465-3.265-3.267C6.735,4.794,8.2,3.331,10,3.331z"></path>
+                  <path fill="none" d="M10,12.503c-4.418,0-7.878,2.058-7.878,4.685c0,0.288,0.231,0.52,0.52,0.52c0.287,0,0.519-0.231,0.519-0.52c0-1.976,3.132-3.646,6.84-3.646c3.707,0,6.838,1.671,6.838,3.646c0,0.288,0.234,0.52,0.521,0.52s0.52-0.231,0.52-0.52C17.879,14.561,14.418,12.503,10,12.503z"></path>
+                </svg>
+              </div>
+              <div class="ml-3">
+                <div class="text-base font-medium leading-none text-white">John Doe</div>
+                <div class="mt-1 text-sm font-medium leading-none text-gray-400">doe@openuni.com</div>
+              </div>
+            </div>
+            <div class="mt-3 px-2" role="menu" aria-orientation="vertical" aria-labelledby="user-menu" role="menuitem">
+              <a href="#" class="block px-3 py-2 rounded-md text-base font-medium text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700" role="menuitem">Your Profile</a>
+              <a href="#" class="mt-1 block px-3 py-2 rounded-md text-base font-medium text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700" role="menuitem">Submissions</a>
+              <a href="#" class="mt-1 block px-3 py-2 rounded-md text-base font-medium text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700" role="menuitem">Sign out</a>
+            </div>
+          </div>
+        </div>
+      </nav>
+        <header class="bg-white">
+          <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex flex-wrap items-center">
+            <h1 class="flex-grow w-full sm:w-6/12 text-3xl font-bold leading-tight text-gray-900">
+              Schedule
+            </h1>
+            <div class="flex-none w-full sm:w-4/12  mt-1 block pr-2">
+              <div class="flex items-center">
+            <label for="price" class="flex-1 text-sm leading-5 font-medium text-gray-700 text-right pr-1">Timezone</label>
+            <div class="flex-1 relative rounded-md shadow-sm bg-white">
+              
+              <select aria-label="Timezone" class="form-select h-full w-full py-0 px-2 border-transparent bg-transparent text-gray-500 sm:text-sm sm:leading-5" id="tzSelect">
+               
+              </select>
+            </div> </div>
+            </div>            
+            <div class="flex-none w-full  sm:w-2/12 form-input mt-1 block relative">
+                <span class="h-full absolute inset-y-0 left-0 flex items-center pl-2">
+                    <svg viewBox="0 0 24 24" class="h-4 w-4 fill-current text-gray-500">
+                        <path
+                            d="M10 4a6 6 0 100 12 6 6 0 000-12zm-8 6a8 8 0 1114.32 4.906l5.387 5.387a1 1 0 01-1.414 1.414l-5.387-5.387A8 8 0 012 10z">
+                        </path>
+                    </svg>
+                </span>
+                <input placeholder="Search" class="appearance-none rounded-r rounded-l sm:rounded-l-none block pl-8 pr-6 py-0 w-full bg-white text-sm placeholder-gray-400 text-gray-700 focus:bg-white focus:placeholder-gray-600 focus:text-gray-700 focus:outline-none z-0" />
+            </div>
+          </div>
+        </header>
+    </div>
+
+
+        <div class="bg-gray-200 mt-2 pb-8 " x-data="step=1">
+          <div class="max-w-7xl mx-auto py-1 px-4 sm:px-6 lg:px-8 flex flex-no-wrap">
+            
+            <div class="mt-1 mx-auto w-full  sm:mt-12  md:mt-16 lg:mt-10  xl:mt-20">
+                <div class="flex flex-no-wrap">
+                    <div class="w-8/12 ">
+                        <h2 class="text-2xl my-2  font-bold leading-7 text-gray-900 sm:text-3xl sm:leading-9 flex items-center ">
+                          <span>Monday, 15.06</span>  
+                        </h2>
+                    </div>
+               
+                <div class="w-4/12 flex items-center">
+                    <span class="flex-1 text-sm leading-5 font-medium text-gray-700 text-right pr-2"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" class="w-6 h-6 inline"><path d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></span>
+                    <div class="flex-initial relative rounded-md shadow-sm bg-white">
+                        <span class="currentTz px-4"> </span>
+                    </div>
+                  </div>
+                </div>
+                <div class="-mx-2 flex flex-no-wrap mt-4">
+                <ul class="w-full mb-2 sm:mb-0 flex flex-wrap sm:flex-no-wrap text-center">
+                  <li class="w-full sm:flex-1 text-cool-gray-700 hover:text-indigo-700 font-semibold bg-cool-gray-50 rounded-lg sm:rounded-b-none mr-0 sm:mr-2"><button class="p-4 w-full h-full">Experimental Track</button></li>
+                  <li class="w-full my-2 sm:my-0 sm:flex-1 text-cool-gray-700 hover:text-indigo-700 font-semibold border-b border-gray-200 hover:bg-cool-gray-50 rounded-lg sm:rounded-b-none  mr-0 sm:mr-2"><button class="p-4  w-full h-full">Computational Track</button></li>
+                  <li class="w-full my-2 sm:my-0  sm:flex-1 text-cool-gray-700 hover:text-indigo-700 font-semibold border-b border-gray-200 hover:bg-cool-gray-50  rounded-lg sm:rounded-b-none mr-0 sm:mr-2"><button class="p-4  w-full h-full">Computational Track</button></li>
+                  <li class="w-full  my-2 sm:my-0  sm:flex-1 text-cool-gray-700 hover:text-indigo-700 font-semibold border-b border-gray-200 hover:bg-cool-gray-50  rounded-lg sm:rounded-b-none mr-0 sm:mr-2"><button class="p-4  w-full h-full">Computational Track</button></li>
+               
+                </ul>  
+                </div>
+                <div class="-mx-2  flex flex-col p-4 bg-cool-gray-50 rounded-b-lg shadow">
+                    <div class="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+                      <div class="align-middle inline-block min-w-full  overflow-hidden border border-gray-200">
+                        <table class="min-w-full">
+                          <thead>
+                            <tr>
+                              <th class="px-6 py-3 border-b border-gray-200 bg-cool-gray-100 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                                Speaker
+                              </th>
+                              <th class="px-6 py-3 border-b border-gray-200 bg-cool-gray-100 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                                Title
+                              </th>
+                              <th class="px-6 py-3 border-b border-gray-200 bg-cool-gray-100 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                                Type
+                              </th>
+                              <th class="px-6 py-3 border-b border-gray-200 bg-cool-gray-100 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                                Time
+                              </th>
+                             
+                            </tr>
+                          </thead>
+                          <tbody class="bg-white">
+                            <tr>
+                              <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                                <div class="flex items-center">
+                                  
+                                 
+                                    <div class="text-sm leading-5 font-medium text-gray-900">Bernard Lane <br>
+                                    <span class="text-sm leading-5 text-gray-500">ETH Zurich, Switzerland</span></div>
+                                 
+                                </div>
+                              </td>
+                              <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                                <div class="text-sm leading-5 text-gray-900"><a href="single.html" class="hover:text-red-800">An interesting talk title on Machine Learning</a><a href="" class="px-2"><img src="img/zoom.svg" class="w-4 h-4 inline" title="Open Zoom meeting" alt=""></a></div>
+                               
+                              </td>
+                              <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                  Webinar
+                                </span>
+                              </td>
+                              <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500">
+                                <time datetime="2020-12-06T09:00:00Z" class="convertDate">2020-12-06T12:00:00Z</time> - <time datetime="2020-12-06T17:00:00Z" class="convertDate">2020-12-06T17:00:00Z</time>
+                              </td>
+                             
+                            </tr>
+                            <tr>
+                              <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                                <div class="flex items-center">
+                                 
+                                    <div class="text-sm leading-5 font-medium text-gray-900">Carla Leone <br>
+                                        <span class="text-sm leading-5 text-gray-500"> Max Planck Institute for Kohleforschung, Germany</span></div>
+                                 
+                                </div>
+                              </td>
+                              <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                                <div class="text-sm leading-5 text-gray-900"><a href="single.html" class="hover:text-red-800">This is a longer title of an interesting talk</a> <a href="" class="px-2"><img src="img/zoom.svg" class="w-4 h-4 inline" title="Open Zoom meeting" alt=""></a></div>
+                               
+                              </td>
+                              <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                  Webinar
+                                </span>
+                              </td>
+                              <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500">
+                                <time datetime="2020-12-06T15:00:00Z" class="convertDate">2020-12-06T15:00:00Z</time> - <time datetime="2020-12-06T16:00:00Z" class="convertDate">2020-12-06T16:00:00Z</time>
+                              </td>
+                            
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200 bg-orange-100">
+                                  <div class="flex items-center">
+                                   
+                                      <div class="text-sm leading-5 font-medium text-gray-900"> <br>
+                                          </div>
+                                   
+                                  </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200 bg-orange-100 ">
+                                  <div class="text-sm leading-5 text-gray-900">Discussion break <a href="" class="px-2"><img src="img/zoom.svg" class="w-4 h-4 inline" title="Open Zoom meeting" alt=""></a></div>
+                                 
+                                </td>
+                                <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200 bg-orange-100">
+                                  <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-orange-100 text-orange-800">
+                                    
+                                  </span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500 bg-orange-100">
+                                  
+                                </td>
+                               
+                              </tr>
+
+
+                            <tr>
+                              <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                                <div class="flex items-center">
+                                 
+                                    <div class="text-sm leading-5 font-medium text-gray-900">Vanda Jukovic <br>
+                                        <span class="text-sm leading-5 text-gray-500">INRS Lyon, France</span></div>
+                                 
+                                </div>
+                              </td>
+                              <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                                <div class="text-sm leading-5 text-gray-900"><a href="single.html" class="hover:text-red-800">PLUMED tutorial</a> <a href="" class="px-2"><img src="img/zoom.svg" class="w-4 h-4 inline" title="Open Zoom meeting" alt=""></a></div>
+                               
+                              </td>
+                              <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-orange-100 text-orange-800">
+                                  Tutorial
+                                </span>
+                              </td>
+                              <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500">
+                                19.00 - 19.45
+                              
+                              </td>
+                             
+                            </tr>
+                            <tr>
+                              <td class="px-6 py-4 whitespace-no-wrap">
+                                <div class="flex items-center">
+                                 
+                                    <div class="text-sm leading-5 font-medium text-gray-900">Michele Vartisculo <br>
+                                        <span class="text-sm leading-5 text-gray-500"> SISSA, Trieste, Italy</span></div>
+                                 
+                                </div>
+                              </td>
+                              <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                                <div class="text-sm leading-5 text-gray-900"><a href="single.html" class="hover:text-red-800">QM/MM with CPMD </a> <a href="" class="px-2"><img src="img/zoom.svg" class="w-4 h-4 inline" title="Open Zoom meeting" alt=""></a></div>
+                               
+                              </td>
+                              <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-orange-100 text-orange-800">
+                                  Tutorial
+                                </span>
+                              </td>
+                              <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500">
+                                20.00 - 20.45
+                              </td>
+                             
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+            </div>
+            <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex flex-wrap md:flex-no-wrap items-center">
+              <h1 class="w-full  md:w-6/12 text-3xl font-bold leading-tight text-gray-900">
+                Schedule
+              </h1>
+              <div class="flex-none w-full sm:w-1/2 md:w-4/12  mt-1 block sm:pr-2 pr-2">
+                <div class="flex items-center">
+                  <label for="price" class="flex-1 text-sm leading-5 font-medium text-gray-700 text-right pr-1">Timezone</label>
+                  <div class="flex-1 relative rounded-md shadow-sm bg-white">
+                    <select2 :options="options" v-model="currentTz" aria-label="Timezone">
+                    </select2>
+                  </div>
+                </div>
+              </div>
+              <autocomplete :results="searchResults" v-model="search" :search="search" ></autocomplete>
+            </div>
+
+            <div class="bg-gray-200 pb-8 ">
+              <div class="max-w-7xl mx-auto py-1 px-4 sm:px-6 lg:px-8">
+                <div v-for="(day,identifier) in days" class="mt-6">
+                  <div class="flex flex-col mb-10">
+                    <div class="-my-2 py-2 w-full sm:-ml-6 sm:px-6 lg:-ml-8 lg:px-8">
+                      <div class="flex flex-no-wrap mb-4">
+                        <div class="w-1/2 sm:w-8/12 ">
+                          <h2
+                            class="text-2xl mt-2  font-bold leading-7 text-gray-900 sm:text-3xl sm:leading-9 flex items-center ">
+                            <span>{{day.day}}</span>
+                          </h2>
+                          <span class="text-lg">{{day.time.format('DD.MM.YYYY')}} </span>
+                        </div>
+                        <div class="w-4/12 flex items-center">
+                          <span class="flex-1 text-sm leading-5 font-medium text-gray-700 text-right pr-2"><svg fill="none"
+                              stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              viewBox="0 0 24 24" class="w-6 h-6 inline">
+                              <path
+                                d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
+                              </path>
+                            </svg></span>
+                          <div class="flex-initial relative rounded-md shadow-sm bg-white">
+                            <span class="currentTz px-4"> {{currentTz}} </span>
+                          </div>
+                        </div>
+                      </div>
+                      <div
+                        class="sm:bg-white align-middle inline-block min-w-full sm:shadow overflow-hidden sm:rounded-lg  border-b border-gray-200">
+                        <div role="table" class="min-w-full z-0 table-container ">
+                        <div class="hidden sm:flex flex-wrap sm:flex-no-wrap  header " role="rowgroup">
+                           
+                              <div role="columnheader" class="w-full sm:w-1/6 px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                                Speaker
+                              </div>
+                              <div role="columnheader" class="flex-row first  w-full sm:w-1/2  px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                                Title
+                              </div>
+                              <div role="columnheader" class="flex-row first  w-full sm:w-1/6  px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                                Type
+                              </div>
+                              <div role="columnheader" class="flex-row first  w-full sm:w-1/6 px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                                Time
+                              </div>
+        
+                            </div>
+                        
+                          <div class="flex bg-white sm:shadow flex-wrap sm:flex-no-wrap items-center border my-4 sm:my-0 sm:border-0 sm:border-b border-gray-200 row" role="rowgroup" v-for="(element, idx) in day.list" :key="element.id"
+                            v-bind:class="{ 'bg-orange-100': element.category=='Break'}" :id="element.clockstart.valueOf()">
+                            <div role="cell" class="flex-row first  w-full sm:w-1/6 px-6 py-4  order-2 sm:order-1">
+                              <div class="flex items-center">
+                                <div class="text-base leading-5 font-medium text-gray-900">{{element.speaker}} <br>
+                                  <span class="text-sm leading-5 text-gray-500">{{element.affiliation}}</span></div>
+                              </div>
+                            </div>
+                            <div role="cell" class="flex-row  w-full sm:w-1/2 px-6 py-4 bg-gray-300 sm:bg-transparent order-1 sm:order-2">
+                              <div class="text-base leading-5 text-gray-900 flex flex-wrap">
+                                <a :href="element.url" class="hover:text-red-800 w-full">{{element.title}}</a>
+        
+                                <!-- <div class="w-full text-sm mt-2 flex items-center text-blue-600" v-show="element.link">
+                                  <svg fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    stroke="currentColor" viewBox="0 0 24 24" class="w-4 h-4 stroke-current">
+                                    <path
+                                      d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1">
+                                    </path>
+                                  </svg>
+                                  <a href='{{element.link}}'>{{element.link}}</a>
+                                </div> -->
+                              </div>
+                            </div>
+                            <div role="cell" class="flex-row  w-1/2 sm:w-1/6 px-6 py-4 p order-3">
+                              <span class="mt-2 p-2 inline-flex text-sm leading-5 font-semibold rounded-sm">
+                                {{element.category}}
+                              </span>
+                            </div>
+                            <div role="cell" class="flex-row  w-1/2 sm:w-1/6 px-6 py-4  text-sm leading-5 text-gray-500 order-4">
+                              <time :datetime="element.clockstart">{{getHumanDate(element.clockstart)}}</time> - <time
+                                :datetime="element.clockend">{{getHumanDate(element.clockend)}}</time>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <p v-if="day.list.length==0">No events on this day.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+</div>
+
+            <div class="max-w-7xl mx-auto py-1 px-4 sm:px-6 lg:px-8 flex flex-no-wrap ">
+            
+                <div class="mt-10 mx-auto w-full sm:mt-12 md:mt-16 lg:mt-10 xl:mt-10">
+                    <div class="flex flex-no-wrap">
+                        <div class="w-8/12 ">
+                            <h2 class="text-2xl my-2  font-bold leading-7 text-gray-900 sm:text-3xl sm:leading-9 ">
+                                Tuesday, 16.06
+                            </h2>
+                        </div>
+                   
+                    <div class="w-4/12 flex items-center">
+                      <span class="flex-1 text-sm leading-5 font-medium text-gray-700 text-right pr-2">Current timezone</span>
+                      <div class="flex-initial relative rounded-md shadow-sm bg-white">
+                          <span class="currentTz px-4"> </span>
+                      </div>
+                      </div>
+                    </div>
+                    <div class="flex flex-col">
+                        <div class="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+                          <div class="align-middle inline-block min-w-full shadow overflow-hidden sm:rounded-lg border-b border-gray-200">
+                            <table class="min-w-full">
+                              <thead>
+                                <tr>
+                                  <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                                    Speaker
+                                  </th>
+                                  <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                                    Title
+                                  </th>
+                                  <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                                    Type
+                                  </th>
+                                  <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                                    Time
+                                  </th>
+                                 
+                                </tr>
+                              </thead>
+                              <tbody class="bg-white">
+                                <tr>
+                                  <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                                    <div class="flex items-center">
+                                      
+                                     
+                                        <div class="text-sm leading-5 font-medium text-gray-900">Bernard Lane <br>
+                                        <span class="text-sm leading-5 text-gray-500">ETH Zurich, Switzerland</span></div>
+                                     
+                                    </div>
+                                  </td>
+                                  <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                                    <div class="text-sm leading-5 text-gray-900"><a href="single.html"> Title of Test Talk </a></div>
+                                   
+                                  </td>
+                                  <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                      Webinar
+                                    </span>
+                                  </td>
+                                  <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500">
+                                    17.00 - 17.45
+                                  </td>
+                                 
+                                </tr>
+                                <tr>
+                                  <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                                    <div class="flex items-center">
+                                     
+                                        <div class="text-sm leading-5 font-medium text-gray-900">Carla Leone <br>
+                                            <span class="text-sm leading-5 text-gray-500"> Max Planck Institute for Kohleforschung, Germany</span></div>
+                                     
+                                    </div>
+                                  </td>
+                                  <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                                    <div class="text-sm leading-5 text-gray-900"><a href="single.html"> Title of Test Talk </a></div>
+                                   
+                                  </td>
+                                  <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                      Webinar
+                                    </span>
+                                  </td>
+                                  <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500">
+                                    18.00 - 18.45
+                                  </td>
+                                
+                                </tr>
+                                <tr>
+                                  <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                                    <div class="flex items-center">
+                                     
+                                        <div class="text-sm leading-5 font-medium text-gray-900">Vanda Jukovic <br>
+                                            <span class="text-sm leading-5 text-gray-500">INRS Lyon, France</span></div>
+                                     
+                                    </div>
+                                  </td>
+                                  <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                                    <div class="text-sm leading-5 text-gray-900"><a href="single.html"> Title of Test Talk </a></div>
+                                   
+                                  </td>
+                                  <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-orange-100 text-orange-800">
+                                      Tutorial
+                                    </span>
+                                  </td>
+                                  <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500">
+                                    19.00 - 19.45
+                                  
+                                  </td>
+                                 
+                                </tr>
+                                <tr>
+                                  <td class="px-6 py-4 whitespace-no-wrap">
+                                    <div class="flex items-center">
+                                     
+                                        <div class="text-sm leading-5 font-medium text-gray-900">Michele Vartisculo <br>
+                                            <span class="text-sm leading-5 text-gray-500"> SISSA, Trieste, Italy</span></div>
+                                     
+                                    </div>
+                                  </td>
+                                  <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                                    <div class="text-sm leading-5 text-gray-900"><a href="single.html"> Title of very long and interesting Test Talk </a></div>
+                                   
+                                  </td>
+                                  <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-orange-100 text-orange-800">
+                                      Tutorial
+                                    </span>
+                                  </td>
+                                  <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500">
+                                    20.00 - 20.45
+                                  </td>
+                                 
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      </div>
+                </div>
+
+
+            </div>
+       
+
+        <div class="max-w-7xl mx-auto py-1 px-4 sm:px-6 lg:px-8 flex flex-no-wrap ">
+            
+            <div class="mt-10 mx-auto w-full sm:mt-12  md:mt-16 lg:mt-10 xl:mt-10">
+                <div class="flex flex-no-wrap">
+                    <div class="w-8/12 ">
+                        <h2 class="text-2xl my-2  font-bold leading-7 text-gray-900 sm:text-3xl sm:leading-9 ">
+                            Wednesday, 16.06
+                        </h2>
+                    </div>
+               
+               
+                </div>
+                <div class="flex flex-col">
+                    <div class="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+                      <div class="align-middle inline-block min-w-full overflow-hidden">
+                        <p>No events on this day.</p>
+                      </div>
+                    </div>
+                  </div>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+        <div class="bg-gray-300 p-8 ">
+            <div class="container mx-auto">
+                <div class="sm:flex sm:flex-wrap md:flex-no-wrap mb-4">
+              <div class="sm:w-1/2 h-auto">
+                  <div class="text-base font-bold mb-2">Organizing commitee</div>
+                  <ul class="list-reset leading-normal">
+                      <li class="hover:text-orange text-gray-600">Olaf Rymsberg</li>
+                      <li class="hover:text-orange text-gray-600">Diana Feinholm</li>
+                      <li class="hover:text-orange text-gray-600">Wei Li Chan</li>
+                      
+                  </ul>
+              </div>
+             
+              <div class="sm:w-1/2 h-auto sm:mt-0 mt-8">
+                <div class="text-base font-bold mb-2">Legal information</div>
+                <ul class="list-reset leading-normal">
+                    <li class="hover:text-orange text-gray-600">Privacy Statement</li>
+                    <li class="hover:text-orange text-gray-600">Impressum</li>
+                                    
+                </ul>
+            </div>
+            <div class="sm:w-1/2 h-auto sm:mt-0 mt-8">
+                <div class="text-base font-bold mb-2">Support</div>
+                <ul class="list-reset leading-normal">
+                    <li class="hover:text-orange text-gray-600">Technical support</li>
+                    <li class="hover:text-orange text-gray-600">Contact the organizers</li>
+                                    
+                </ul>
+            </div>
+                <div class="sm:w-1/4 sm:mt-0 mt-8 h-auto">
+                    <div class="text-base font-bold mb-2">Newsletter</div>
+                    <p class="text-gray-600 leading-normal">Put yourself on the mailing list. </p>
+                    <div class="mt-4 flex">
+                        <input type="text" class="p-2 border border-gray-200 round text-gray-700 text-sm h-auto" placeholder="Your email address">
+                        <button class="bg-gray-800 text-white rounded-sm h-auto text-xs p-3">Subscribe</button>
+                    </div>
+                </div>
+            
+            </div>
+            </div> 
+        </div>
+
+
+
+		<script type="text/javascript">
+			$(document).ready(function() {
+        var timezones = moment.tz.names();
+				$("#tzSelect").select2({
+          data: timezones
+          
+        });
+
+        // Guess Timezone from browser and set all times to user timezone
+        var guessTz=moment.tz.guess();
+        var currentTz=guessTz;
+        $('#tzSelect').val(guessTz);
+        $('#tzSelect').select2().trigger('change');
+    
+        $('.currentTz').text(guessTz)
+        updateTimeZone(guessTz)
+
+        // if a different timezone is selected, update all times
+        $('#tzSelect').on('select2:select', function (e) {
+            currentTz=$('#tzSelect').select2('data')[0].text;
+            $('.currentTz').text(currentTz);
+            updateTimeZone(currentTz)
+        });
+
+        
+
+      });
+      
+      function updateTimeZone(tz){
+        $('.convertDate').each(function() {
+          $(this).html(moment($(this).attr('datetime')).tz(tz).format('HH:mm'))
+          
+        });
+      }
+		</script>
+</body>
+</html>

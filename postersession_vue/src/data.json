@@ -1,0 +1,485 @@
+[{
+    "id": 1049,
+    "url": "\/VCMS\/posters\/experimental\/my-awesome-poster\/",
+    "title": "A long poster title which combines experimental and computational work",
+    "speaker": "John Doe",
+    "authors": [{
+        "fullname": "John Doe",
+        "twitter": "johndoe",
+        "affiliation": "EPFL",
+        "hyperlink": "github.com",
+        "orcid": "0000-1234-4034-2342",
+        "open": false,
+        "presenting": true
+      }, 
+      {
+        "fullname": "Moritz Werner",
+        "twitter": "johndoe",
+        "affiliation": "EPFL",
+        "hyperlink": "github.com",
+        "orcid": "0000-1234-4034-2342",
+        "open": false,
+        "presenting": true
+      }
+    ],
+    "tags":[{"id":1054, "name":"Molecular dynamics"},{"id":1050,"name":"Experimental"},{"id":1051, "name":"QM"},{"id":1052, "name":"Unique"}],
+    "abstract": "Unique einzigartig text While PDF Posters are nice for offline poster sessions, the amount of information they display most of the times is way to much to read on a screen. For Virtual poster sessions the format should be adapted and use can be made of multi page PDFs to structure ones thoughts or even interactive html presentation can be used (see Google Slides and reveal.js examples). Nevertheless you can use services like Posterdown to create Posters directly from R in a reproducible way.",
+    "iframe": "<iframe src=\"https:\/\/docs.google.com\/presentation\/d\/e\/2PACX-1vTnd71f-6edutb_oLL6qBRLyla2QGN_2_AG_5En0DSI0wo8pZGFC0I53dGJw-WmVg\/embed?start=false&loop=false&delayms=3000\" frameborder=\"0\" width=\"1027\" height=\"600\" allowfullscreen=\"true\" mozallowfullscreen=\"true\" webkitallowfullscreen=\"true\"><\/iframe>",
+    "pdf": "",
+    "pdftitle": "posterdown.pdf",
+    "doi": "1010/2012.120321",
+    "twitter": "https://twitter.com/09203940202342343",
+    "votes": 1,
+    "comments": 1,
+    "img": "/img/slidesPresentation.png", 
+    "license": "by-sa", 
+    "pronouns": "his/his/his"
+},
+{
+    "id": 1050,
+    "url": "\/VCMS\/posters\/experimental\/my-awesome-poster\/",
+    "title": "The one poster that was held virtual",
+    "speaker": "John Doe",
+    "authors": [{
+        "fullname": "John Doe",
+        "twitter": "johndoe",
+        "affiliation": "EPFL",
+        "hyperlink": "github.com",
+        "orcid": "0000-1234-4034-2342",
+        "open": false,
+        "presenting": true
+      }, 
+      {
+        "fullname": "Moritz Werner",
+        "twitter": "johndoe",
+        "affiliation": "EPFL",
+        "hyperlink": "github.com",
+        "orcid": "0000-1234-4034-2342",
+        "open": false,
+        "presenting": true
+      }
+    ],
+    "tags":[{"id":1049, "name":"Computational"},{"id":1050,"name":"Experimental"},{"id":1051, "name":"QM"}],
+    "abstract": "While PDF Posters are nice for offline poster sessions, the amount of information they display most of the times is way to much to read on a screen. For Virtual poster sessions the format should be adapted and use can be made of multi page PDFs to structure ones thoughts or even interactive html presentation can be used (see Google Slides and reveal.js examples). Nevertheless you can use services like Posterdown to create Posters directly from R in a reproducible way.",
+    "iframe": "",
+    "pdf": "\/img\/posterdown.pdf",
+    "pdftitle": "posterdown.pdf",
+    "doi": "1010/2012.120321",
+    "twitter": "https://twitter.com/09203940202342343",
+    "votes": 18,
+    "comments": 3,
+    "img": "/img/pdfposter.png",
+    "license": "cc.srr",
+    "pronouns": "his/his/his"
+},
+{
+    "id": 1052,
+    "url": "\/VCMS\/posters\/experimental\/my-awesome-poster\/",
+    "title": "The one poster that was held virtual",
+    "speaker": "John Doe",
+    "authors": [{
+        "fullname": "John Doe",
+        "twitter": "johndoe",
+        "affiliation": "EPFL",
+        "hyperlink": "github.com",
+        "orcid": "0000-1234-4034-2342",
+        "open": false,
+        "presenting": true
+      }, 
+      {
+        "fullname": "Moritz Werner",
+        "twitter": "johndoe",
+        "affiliation": "EPFL",
+        "hyperlink": "github.com",
+        "orcid": "0000-1234-4034-2342",
+        "open": false,
+        "presenting": true
+      }
+    ],
+    "tags":[{"id":1049, "name":"Computational"},{"id":1050,"name":"Experimental"},{"id":1051, "name":"QM"}],
+    "abstract": "While PDF Posters are nice for offline poster sessions, the amount of information they display most of the times is way to much to read on a screen. For Virtual poster sessions the format should be adapted and use can be made of multi page PDFs to structure ones thoughts or even interactive html presentation can be used (see Google Slides and reveal.js examples). Nevertheless you can use services like Posterdown to create Posters directly from R in a reproducible way.",
+    "iframe": "<iframe src=\"https:\/\/docs.google.com\/presentation\/d\/e\/2PACX-1vTnd71f-6edutb_oLL6qBRLyla2QGN_2_AG_5En0DSI0wo8pZGFC0I53dGJw-WmVg\/embed?start=false&loop=false&delayms=3000\" frameborder=\"0\" width=\"1027\" height=\"600\" allowfullscreen=\"true\" mozallowfullscreen=\"true\" webkitallowfullscreen=\"true\"><\/iframe>",
+    "pdf": "",
+    "pdftitle": "posterdown.pdf",
+    "doi": "1010/2012.120321",
+    "twitter": "https://twitter.com/09203940202342343",
+    "votes": 18,
+    "comments": 3,
+    "img": "/img/slidesPresentation.png", 
+    "license": "by-nc-sa",
+    "pronouns": "his/his/his"
+},
+{
+    "id": 1051,
+    "url": "\/VCMS\/posters\/experimental\/my-awesome-poster\/",
+    "title": "The one poster that was held virtual",
+    "speaker": "John Doe",
+    "authors": [{
+        "fullname": "John Doe",
+        "twitter": "johndoe",
+        "affiliation": "EPFL",
+        "hyperlink": "github.com",
+        "orcid": "0000-1234-4034-2342",
+        "open": false,
+        "presenting": true
+      }, 
+      {
+        "fullname": "Moritz Werner",
+        "twitter": "johndoe",
+        "affiliation": "EPFL",
+        "hyperlink": "github.com",
+        "orcid": "0000-1234-4034-2342",
+        "open": false,
+        "presenting": true
+      }
+    ],
+    "tags":[{"id":1054, "name":"Molecular dynamics"},{"id":1050,"name":"Experimental"},{"id":1051, "name":"QM"}],
+    "abstract": "While PDF Posters are nice for offline poster sessions, the amount of information they display most of the times is way to much to read on a screen. For Virtual poster sessions the format should be adapted and use can be made of multi page PDFs to structure ones thoughts or even interactive html presentation can be used (see Google Slides and reveal.js examples). Nevertheless you can use services like Posterdown to create Posters directly from R in a reproducible way.",
+    "iframe": "",
+    "pdf": "\/img\/posterdown.pdf",
+    "pdftitle": "posterdown.pdf",
+    "doi": "1010/2012.120321",
+    "twitter": "https://twitter.com/09203940202342343",
+    "votes": 18,
+    "comments": 3,
+    "img": "/img/pdfposter.png",
+    "license": "by-sa",
+    "pronouns": "his/his/his"
+},
+{
+    "id": 1053,
+    "url": "\/VCMS\/posters\/experimental\/my-awesome-poster\/",
+    "title": "The one poster that was held virtual",
+    "speaker": "John Doe",
+    "authors": [{
+        "fullname": "John Doe",
+        "twitter": "johndoe",
+        "affiliation": "EPFL",
+        "hyperlink": "github.com",
+        "orcid": "0000-1234-4034-2342",
+        "open": false,
+        "presenting": true
+      }, 
+      {
+        "fullname": "Moritz Werner",
+        "twitter": "johndoe",
+        "affiliation": "EPFL",
+        "hyperlink": "github.com",
+        "orcid": "0000-1234-4034-2342",
+        "open": false,
+        "presenting": true
+      }
+    ],
+    "tags":[{"id":1049, "name":"Computational"},{"id":1050,"name":"Experimental"},{"id":1051, "name":"QM"}],
+    "abstract": "While PDF Posters are nice for offline poster sessions, the amount of information they display most of the times is way to much to read on a screen. For Virtual poster sessions the format should be adapted and use can be made of multi page PDFs to structure ones thoughts or even interactive html presentation can be used (see Google Slides and reveal.js examples). Nevertheless you can use services like Posterdown to create Posters directly from R in a reproducible way.",
+    "iframe": "<iframe src=\"https:\/\/slides.com\/simonduerr\/an-interactive-html-presentation\/embed?style=light\" width=\"576\" height=\"420\" scrolling=\"no\" frameborder=\"0\" webkitallowfullscreen mozallowfullscreen allowfullscreen><\/iframe>",
+    "pdf": "",
+    "pdftitle": "posterdown.pdf",
+    "doi": "1010/2012.120321",
+    "twitter": "https://twitter.com/09203940202342343",
+    "votes": 18,
+    "comments": 3,
+    "img": "/img/interactive.png",
+    "license": "by-sa",
+    "pronouns": "his/his/his"
+},
+{
+    "id": 1054,
+    "url": "\/VCMS\/posters\/experimental\/my-awesome-poster\/",
+    "title": "The one poster that was held virtual",
+    "speaker": "John Doe",
+    "authors": [{
+        "fullname": "John Doe",
+        "twitter": "johndoe",
+        "affiliation": "EPFL",
+        "hyperlink": "github.com",
+        "orcid": "0000-1234-4034-2342",
+        "open": false,
+        "presenting": true
+      }, 
+      {
+        "fullname": "Moritz Werner",
+        "twitter": "johndoe",
+        "affiliation": "EPFL",
+        "hyperlink": "github.com",
+        "orcid": "0000-1234-4034-2342",
+        "open": false,
+        "presenting": true
+      }
+    ],
+    "tags":[{"id":1049, "name":"Computational"},{"id":1050,"name":"Experimental"},{"id":1051, "name":"QM"}],
+    "abstract": "While PDF Posters are nice for offline poster sessions, the amount of information they display most of the times is way to much to read on a screen. For Virtual poster sessions the format should be adapted and use can be made of multi page PDFs to structure ones thoughts or even interactive html presentation can be used (see Google Slides and reveal.js examples). Nevertheless you can use services like Posterdown to create Posters directly from R in a reproducible way.",
+    "iframe": "",
+    "pdf": "\/img\/posterdown.pdf",
+    "pdftitle": "posterdown.pdf",
+    "doi": "1010/2012.120321",
+    "twitter": "https://twitter.com/09203940202342343",
+    "votes": 18,
+    "comments": 3,
+    "img": "/img/pdfposter.png",
+    "license": "by-sa",
+    "pronouns": "his/his/his"
+},
+{
+    "id": 1055,
+    "url": "\/VCMS\/posters\/experimental\/my-awesome-poster\/",
+    "title": "The one poster that was held virtual",
+    "speaker": "John Doe",
+    "authors": [{
+        "fullname": "John Doe",
+        "twitter": "johndoe",
+        "affiliation": "EPFL",
+        "hyperlink": "github.com",
+        "orcid": "0000-1234-4034-2342",
+        "open": false,
+        "presenting": true
+      }, 
+      {
+        "fullname": "Moritz Werner",
+        "twitter": "johndoe",
+        "affiliation": "EPFL",
+        "hyperlink": "github.com",
+        "orcid": "0000-1234-4034-2342",
+        "open": false,
+        "presenting": true
+      }
+    ],
+    "tags":[{"id":1049, "name":"Computational"},{"id":1050,"name":"Experimental"},{"id":1051, "name":"QM"}],
+    "abstract": "While PDF Posters are nice for offline poster sessions, the amount of information they display most of the times is way to much to read on a screen. For Virtual poster sessions the format should be adapted and use can be made of multi page PDFs to structure ones thoughts or even interactive html presentation can be used (see Google Slides and reveal.js examples). Nevertheless you can use services like Posterdown to create Posters directly from R in a reproducible way.",
+    "iframe": "",
+    "pdf": "\/img\/posterdown.pdf",
+    "pdftitle": "posterdown.pdf",
+    "doi": "1010/2012.120321",
+    "twitter": "https://twitter.com/09203940202342343",
+    "votes": 18,
+    "comments": 3,
+    "img": "/img/pdfposter.png",
+    "license": "by-sa",
+    "pronouns": "his/his/his"
+},
+
+{
+    "id": 1056,
+    "url": "\/VCMS\/posters\/experimental\/my-awesome-poster\/",
+    "title": "The one poster that was held virtual",
+    "speaker": "John Doe",
+    "authors": [{
+        "fullname": "John Doe",
+        "twitter": "johndoe",
+        "affiliation": "EPFL",
+        "hyperlink": "github.com",
+        "orcid": "0000-1234-4034-2342",
+        "open": false,
+        "presenting": true
+      }, 
+      {
+        "fullname": "Moritz Werner",
+        "twitter": "johndoe",
+        "affiliation": "EPFL",
+        "hyperlink": "github.com",
+        "orcid": "0000-1234-4034-2342",
+        "open": false,
+        "presenting": true
+      }
+    ],
+    "tags":[{"id":1049, "name":"Computational"},{"id":1050,"name":"Experimental"},{"id":1051, "name":"QM"}],
+    "abstract": "While PDF Posters are nice for offline poster sessions, the amount of information they display most of the times is way to much to read on a screen. For Virtual poster sessions the format should be adapted and use can be made of multi page PDFs to structure ones thoughts or even interactive html presentation can be used (see Google Slides and reveal.js examples). Nevertheless you can use services like Posterdown to create Posters directly from R in a reproducible way.",
+    "iframe": "<iframe src=\"https:\/\/slides.com\/simonduerr\/an-interactive-html-presentation\/embed?style=light\" width=\"576\" height=\"420\" scrolling=\"no\" frameborder=\"0\" webkitallowfullscreen mozallowfullscreen allowfullscreen><\/iframe>",
+    "pdf": "",
+    "pdftitle": "posterdown.pdf",
+    "doi": "1010/2012.120321",
+    "twitter": "https://twitter.com/09203940202342343",
+    "votes": 18,
+    "comments": 3,
+    "img": "/img/interactive.png",
+    "license": "by-nc-sa",
+    "pronouns": "his/his/his"
+},
+
+{
+    "id": 1057,
+    "url": "\/VCMS\/posters\/experimental\/my-awesome-poster\/",
+    "title": "Virtual Poster Management Systems are needed",
+    "speaker": "John Doe",
+    "authors": [{
+        "fullname": "John Doe",
+        "twitter": "johndoe",
+        "affiliation": "EPFL",
+        "hyperlink": "github.com",
+        "orcid": "0000-1234-4034-2342",
+        "open": false,
+        "presenting": true
+      }, 
+      {
+        "fullname": "Moritz Werner",
+        "twitter": "johndoe",
+        "affiliation": "EPFL",
+        "hyperlink": "github.com",
+        "orcid": "0000-1234-4034-2342",
+        "open": false,
+        "presenting": true
+      }
+    ],
+    "tags":[{"id":1049, "name":"Computational"},{"id":1050,"name":"Experimental"},{"id":1051, "name":"QM"}],
+    "abstract": "While PDF Posters are nice for offline poster sessions, the amount of information they display most of the times is way to much to read on a screen. For Virtual poster sessions the format should be adapted and use can be made of multi page PDFs to structure ones thoughts or even interactive html presentation can be used (see Google Slides and reveal.js examples). Nevertheless you can use services like Posterdown to create Posters directly from R in a reproducible way.",
+    "iframe": "<iframe src=\"https:\/\/docs.google.com\/presentation\/d\/e\/2PACX-1vTnd71f-6edutb_oLL6qBRLyla2QGN_2_AG_5En0DSI0wo8pZGFC0I53dGJw-WmVg\/embed?start=false&loop=false&delayms=3000\" frameborder=\"0\" width=\"1027\" height=\"600\" allowfullscreen=\"true\" mozallowfullscreen=\"true\" webkitallowfullscreen=\"true\"><\/iframe>",
+    "pdf": "f",
+    "pdftitle": "posterdown.pdf",
+    "doi": "1010/2012.120321",
+    "twitter": "https://twitter.com/09203940202342343",
+    "votes": 18,
+    "comments": 3,
+    "img": "/img/slidesPresentation.png",
+    "license": "cc0",
+    "pronouns": "his/his/his"
+},
+
+{
+    "id": 1058,
+    "url": "\/VCMS\/posters\/experimental\/my-awesome-poster\/",
+    "title": "The one poster that was held virtual",
+    "speaker": "John Doe",
+    "authors": [{
+        "fullname": "John Doe",
+        "twitter": "johndoe",
+        "affiliation": "EPFL",
+        "hyperlink": "github.com",
+        "orcid": "0000-1234-4034-2342",
+        "open": false,
+        "presenting": true
+      }, 
+      {
+        "fullname": "Moritz Werner",
+        "twitter": "johndoe",
+        "affiliation": "EPFL",
+        "hyperlink": "github.com",
+        "orcid": "0000-1234-4034-2342",
+        "open": false,
+        "presenting": true
+      }
+    ],
+    "tags":[{"id":1049, "name":"Computational"},{"id":1050,"name":"Experimental"},{"id":1051, "name":"QM"}],
+    "abstract": "While PDF Posters are nice for offline poster sessions, the amount of information they display most of the times is way to much to read on a screen. For Virtual poster sessions the format should be adapted and use can be made of multi page PDFs to structure ones thoughts or even interactive html presentation can be used (see Google Slides and reveal.js examples). Nevertheless you can use services like Posterdown to create Posters directly from R in a reproducible way.",
+    "iframe": "<iframe src=\"https:\/\/slides.com\/simonduerr\/an-interactive-html-presentation\/embed?style=light\" width=\"576\" height=\"420\" scrolling=\"no\" frameborder=\"0\" webkitallowfullscreen mozallowfullscreen allowfullscreen><\/iframe>",
+    "pdf": "",
+    "pdftitle": "posterdown.pdf",
+    "doi": "1010/2012.120321",
+    "twitter": "https://twitter.com/09203940202342343",
+    "votes": 18,
+    "comments": 3,
+    "img": "/img/interactive.png",
+    "license": "by-nc-nd",
+    "pronouns": "his/his/his"
+},
+
+{
+    "id": 1059,
+    "url": "\/VCMS\/posters\/experimental\/my-awesome-poster\/",
+    "title": "The one poster that was held virtual asdasd",
+    "speaker": "John Doe",
+    "authors": [{
+        "fullname": "John Doe",
+        "twitter": "johndoe",
+        "affiliation": "EPFL",
+        "hyperlink": "github.com",
+        "orcid": "0000-1234-4034-2342",
+        "open": false,
+        "presenting": true
+      }, 
+      {
+        "fullname": "Moritz Werner",
+        "twitter": "johndoe",
+        "affiliation": "EPFL",
+        "hyperlink": "github.com",
+        "orcid": "0000-1234-4034-2342",
+        "open": false,
+        "presenting": true
+      }
+    ],
+    "tags":[{"id":1049, "name":"Computational"},{"id":1050,"name":"Experimental"},{"id":1051, "name":"QM"}],
+    "abstract": "While PDF Posters are nice for offline poster sessions, the amount of information they display most of the times is way to much to read on a screen. For Virtual poster sessions the format should be adapted and use can be made of multi page PDFs to structure ones thoughts or even interactive html presentation can be used (see Google Slides and reveal.js examples). Nevertheless you can use services like Posterdown to create Posters directly from R in a reproducible way.",
+    "iframe": "<iframe src=\"https:\/\/docs.google.com\/presentation\/d\/e\/2PACX-1vTnd71f-6edutb_oLL6qBRLyla2QGN_2_AG_5En0DSI0wo8pZGFC0I53dGJw-WmVg\/embed?start=false&loop=false&delayms=3000\" frameborder=\"0\" width=\"1027\" height=\"600\" allowfullscreen=\"true\" mozallowfullscreen=\"true\" webkitallowfullscreen=\"true\"><\/iframe>",
+    "pdf": "",
+    "pdftitle": "posterdown.pdf",
+    "doi": "1010/2012.120321",
+    "twitter": "https://twitter.com/09203940202342343",
+    "votes": 18,
+    "comments": 3,
+    "img": "/img/slidesPresentation.png",
+    "license": "by-nc-sa"
+},
+{
+    "id": 1061,
+    "url": "\/VCMS\/posters\/experimental\/my-awesome-poster\/",
+    "title": "The one poster that was held virtual asdasd",
+    "speaker": "John Doe",
+    "authors": [{
+        "fullname": "John Doe",
+        "twitter": "johndoe",
+        "affiliation": "EPFL",
+        "hyperlink": "github.com",
+        "orcid": "0000-1234-4034-2342",
+        "open": false,
+        "presenting": true
+      }, 
+      {
+        "fullname": "Moritz Werner",
+        "twitter": "johndoe",
+        "affiliation": "EPFL",
+        "hyperlink": "github.com",
+        "orcid": "0000-1234-4034-2342",
+        "open": false,
+        "presenting": true
+      }
+    ],
+    "tags":[{"id":1049, "name":"Computational"},{"id":1050,"name":"Experimental"},{"id":1051, "name":"QM"}],
+    "abstract": "While PDF Posters are nice for offline poster sessions, the amount of information they display most of the times is way to much to read on a screen. For Virtual poster sessions the format should be adapted and use can be made of multi page PDFs to structure ones thoughts or even interactive html presentation can be used (see Google Slides and reveal.js examples). Nevertheless you can use services like Posterdown to create Posters directly from R in a reproducible way.",
+    "iframe": "<iframe src=\"https:\/\/slides.com\/simonduerr\/an-interactive-html-presentation\/embed?style=light\" width=\"576\" height=\"420\" scrolling=\"no\" frameborder=\"0\" webkitallowfullscreen mozallowfullscreen allowfullscreen><\/iframe>",
+    "pdf": "",
+    "pdftitle": "posterdown.pdf",
+    "doi": "1010/2012.120321",
+    "twitter": "https://twitter.com/09203940202342343",
+    "votes": 18,
+    "comments": 3,
+    "img": "/img/interactive.png",
+    "license": "by-nc-nd",
+    "pronouns": "his/his/his"
+},
+{
+    "id": 1060,
+    "url": "\/VCMS\/posters\/experimental\/my-awesome-poster\/",
+    "title": "The one poster that was held virtual",
+    "speaker": "John Doe",
+    "authors": [{
+        "fullname": "John Doe",
+        "twitter": "johndoe",
+        "affiliation": "EPFL",
+        "hyperlink": "github.com",
+        "orcid": "0000-1234-4034-2342",
+        "open": false,
+        "presenting": true
+      }, 
+      {
+        "fullname": "Moritz Werner",
+        "twitter": "johndoe",
+        "affiliation": "EPFL",
+        "hyperlink": "github.com",
+        "orcid": "0000-1234-4034-2342",
+        "open": false,
+        "presenting": true
+      }
+    ],
+    "tags":[{"id":1054, "name":"Molecular dynamics"},{"id":1050,"name":"Experimental"},{"id":1051, "name":"QM"}],
+    "abstract": "While PDF Posters are nice for offline poster sessions, the amount of information they display most of the times is way to much to read on a screen. For Virtual poster sessions the format should be adapted and use can be made of multi page PDFs to structure ones thoughts or even interactive html presentation can be used (see Google Slides and reveal.js examples). Nevertheless you can use services like Posterdown to create Posters directly from R in a reproducible way.",
+    "iframe": "<iframe src=\"https:\/\/docs.google.com\/presentation\/d\/e\/2PACX-1vTnd71f-6edutb_oLL6qBRLyla2QGN_2_AG_5En0DSI0wo8pZGFC0I53dGJw-WmVg\/embed?start=false&loop=false&delayms=3000\" frameborder=\"0\" width=\"1027\" height=\"600\" allowfullscreen=\"true\" mozallowfullscreen=\"true\" webkitallowfullscreen=\"true\"><\/iframe>",
+    "pdf": "",
+    "pdftitle": "posterdown.pdf",
+    "doi": "1010/2012.120321",
+    "twitter": "https://twitter.com/09203940202342343",
+    "votes": 18,
+    "comments": 3,
+    "img": "/img/slidesPresentation.png",
+    "license": "by-sa",
+    "pronouns": "his/his/his"
+}
+]

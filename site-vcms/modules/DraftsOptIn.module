@@ -1,0 +1,308 @@
+<?php namespace ProcessWire;
+
+class DraftsOptIn extends Process {
+
+	public static function getModuleInfo() {
+		return array(
+			'title' => 'Accept Submissions',
+			'summary' => 'Manage Submissions via this interfcae',
+			'version' => 001,
+			'permanent' => false,
+			'singular' => true,
+			'permission' => 'manage-submissions', 
+			'permissions' => array(
+				'manage-submissions' => 'Approve submissions'
+			), 
+			
+		);
+	}
+
+	public function init() {
+		parent::init();
+	}
+
+	public function ___execute() {
+		$this->setFuel('processHeadline', 'Submissions');
+
+		$out  = "<div id='all_sub'><div class=\"uk-flex\">";
+		$out .= "<div class=\"uk-width-2-3@m\"><h2>". $this->_("All Submissions with status") ." <span class=''>";
+		$out .='<div class="uk-button"><select class="uk-select" onchange="window.location = \'?status=\' + this.value">';
+
+		$status = array("submitted", "declined", "saved", "accepted"); 
+
+		foreach ($status as $s){
+			if ($this->input->get->text("status")=="" or $this->input->get->text("status")==$s){
+				$sel="selected";
+				$parent=$s;
+			}else{$sel="";}
+			$out .= "<option value='$s' $sel> $s</option>";
+		}
+		$out .= "</select></div>";
+		$out .= "</span></h2></div> <div class=\"uk-width-1-3@m\">
+		<a class=\"uk-button uk-button-default  uk-flex-inline\" uk-icon=\"refresh\" href=\"./\" > 
+	 Refresh</a><a class=\"uk-margin-left uk-button uk-button-default  uk-flex-inline\" uk-icon=\"database\" href=\"./csv?status=".$this->input->get->text("status")."\" > 
+	 Download as CSV</a></div></div> <div id='submissiontable'> \n";
+
+		$table = $this->modules->get("MarkupAdminDataTable");
+		$table->setEncodeEntities(false);
+		$table->id = 'submissionstable';
+		$table->headerRow(array(
+								$this->_('Presenting author'),
+								$this->_('Mail'),
+								$this->_('Title'),
+								$this->_('Type'),
+								$this->_('Submission date'),
+								$this->_('Actions')));
+		$today=time();
+		$drafts = $this->pages->find('template=talk|poster,parent="/contributions/'.$parent.'/",limit=10,sort=-created');
+		if($drafts->count() == 0) {
+			$out .= $this->_("No submissions with status $parent");
+		} else {
+			
+
+			foreach($drafts as $draft) {
+				// output in table rows with edit link and delete checkbox?
+				$button = $this->modules->get('InputfieldButton');
+				$button->value = 'Manage';
+				$button->attr('data-href', './edit/?id='.$draft->id);
+				
+				$button->addClass('pw-panel');
+
+				 $table->row(array(
+					 $draft->speaker->name . " " . $draft->nachname => "edit/?id={$draft->id}",
+					 $draft->speaker->email,
+					 $draft->title,
+					 $draft->template,
+					 date($this->config->dateFormat,$draft->created),
+					 $button->render()
+				));
+			}
+			$out .= $table->render();
+			$pager = $drafts->getTotal() > count($drafts) ? $drafts->renderPager() : '';
+			$out .= $pager;
+			$out .="</div>";
+		}
+
+		$out .= "</div>";
+		$pagenum= $this->input->pageNum;
+		$out .='<script>
+
+		$(document).ready(function() {
+			function poll() {
+			  $.get("./page'.$pagenum.'?status='.$parent.' #all_sub", function(data) {
+				$("#all_sub").replaceWith(data);
+				pwPanels.init();
+		   });
+			}
+			setTimeout(poll, 15000);
+		  });
+ 			</script>';
+		return $out;
+	}
+	public function ___executeCsv() {
+		$this->setFuel('processHeadline', 'Exporting as CSV');
+
+		$out  = "<div id='all_sub'><div class=\"uk-flex\">";
+		
+		$status = array("submitted", "accepted", "declined", "saved"); 
+
+		
+		foreach ($status as $s){
+			if ($this->input->get->text("status")=="" or $this->input->get->text("status")==$s){
+				$parent=$s;
+			}
+		}
+		$out .= "<div class=\"uk-width-2-3@m\"><h2>". $this->_("Exporting all submissions with status ")."<span class='uk-label'>".$parent."</span></h2>";
+		try {
+			$array = $this->pages->find('template=talk|poster,parent="/contributions/'.$parent.'/",sort=-created')->explode(function($item){
+				return array(
+					'id'=> $item->id,
+					'title' => $item->title,
+					'presenting_author' => $item->speaker->title,
+					'presenting_author_email'=> $item->speaker->email,
+					'submitted' => $item->created,
+					'doi' => $item->doi,
+					'tweet' => $item->twitter,
+	
+					);
+			});
+			
+			$fp = fopen('export.csv', 'w');
+			foreach ($array as $fields) fputcsv($fp, $fields);
+			fclose($fp);
+			$this->message("The CSV was successfully generated"); 
+		} catch (\Throwable $th) {
+			$this->error("The CSV file could not be generated"); 
+		}
+	
+		$out .= "<a href=\"".$this->config->urls->templates."export.csv\" download> Download CSV file</a>";
+		$out .= "</div>";
+		$out .= "</div>";
+
+		return $out;
+	}
+	public function ___executeEdit() {
+
+		$this->fuel->breadcrumbs->add(new Breadcrumb('../', 'Drafts'));
+		$id = (int) $this->input->get->id;
+		$draft = $this->pages->get($id);
+
+		 if ($id < 1 ) return false;
+
+		$out = '';
+		
+			
+		
+		if ($this->input->post->accepted or $this->input->post->declined or $this->input->post->sendmessage ) {
+			if ($this->input->post->declined) {
+				$draft->parent = wire('pages')->get("/contributions/declined/");
+				$draft->save();
+				$this->message("Submission was declined. It is still available under declined.");
+				$subject='Submission declined';
+			}
+			if ($this->input->post->accepted) {
+				$draft->parent = wire('pages')->get("/contributions/accepted/");
+				$draft->save();
+				$subject='Submission accepted';
+				$this->message("Submission was accepted");
+			}
+			if ($this->input->post->sendmessage) {
+				$subject='Message from the organizers';
+				$this->message("Message sent");
+			}
+		
+			try{
+				$mail = wireMail();
+				$mail->to($draft->speaker->email); 
+
+				$mail->subject($this->pages->get("/settings/")->conference_title.": ".$subject); 
+				$mail->bodyHTML("<html><body>".$this->input->post->msg2authors."</body></html>");
+				$mail->send(); 
+				$this->message("Email to creator was sent.");
+			} catch (Exception $e) {
+				$this->error("There was a problem sending the confirmation email.");   
+			}
+           
+		}
+
+		$out .= "<div class='uk-grid-divider' uk-grid>";
+
+
+		
+		$out .= "<div class='uk-width-expand@m'>";
+		
+		$out .= "<span class='uk-label uk-label-danger uk-text-large uk-text-bold'>{$draft->template}</span> <h1 class='uk-heading'>".$draft->title."</h1>   ";
+
+		$out .="<h3 class='uk-heading-divider'>Authors</h3>";
+		$out .= '<ul class="uk-list">';
+
+		foreach (json_decode($draft->authors) as $author){
+			$u1="";
+			$u2="";
+			$email="";
+			if ($author->presenting) {
+				$u1="<u>";
+				$u2="</u>";
+				$email=$draft->speaker->email;
+			}
+			$out .= "<li><dl class=\"uk-description-list\"><dt><b>".$u1.$author->fullname.$u2."</b></dt><dd>".$author->affiliation." <br> ".$author->orcid."<br><a href='mailto:{$email}'>".$email."</a></dd></dl></li>";
+		}
+		$out .="<h3 class='uk-heading-divider'>Abstract</h3>";
+		$out .= "</ul><div>".$draft->getFormatted('abstract')."</div> ";
+	
+		$out .= "</div><div class=\"uk-width-1-3@m\">";
+		$out .= "<dt>Status</dt>";
+		$out .= "<dd><span class='uk-label'>{$draft->parent->title}</span></dd>"; 
+		$out .= "<dl class=\"uk-description-list\">";
+		$out .= "<dt>DOI</dt>";
+		if ($draft->doi!='') {
+		$out .= "<dd><a href='{$draft->doi}'>{$draft->doi}</a></dd>";
+		}else{
+			$out .= "<dd>No DOI specified</dd>";
+		}
+		$out .= "<dt>Link to tweet</dt>";
+		if ($draft->twitter!='') {
+			$out .= "<dd><a href='{$draft->twitter}'>{$draft->twitter}</a></dd>";
+		}else{
+			$out .= "<dd>No tweet link saved</dd>";
+		}
+
+		$out .= "<dt>License</dt>";
+		if ($draft->license!='') {
+			$out .= "<dd><img src='/VCMS/site/templates/img/{$draft->license}.svg'/></dd>";
+		}else{
+			$out .= "<dd>No license specified</dd>";
+		}
+
+		$out .= "</dl></div>";
+		$out .= "<div class=' uk-width-1-3@mcontainer-3of3'>";
+		$out .= "<a class='edit-draft' href='". $this->pages->get($this->config->adminRootPageID)->url ."page/edit/?id=$draft->id'>". $this->_("Edit Submission") ."</a> &nbsp; ";
+		$out .= "</div>"; 
+
+		
+			$out .= "<div id='paid_container' class='container-1of2'>";
+			if ($draft->parent->name=="submitted") {
+			$out .= "<p class='description'>" . $this->_("Verify that the Submission conforms to your guidelines and accept or decline it.") . "</p>";
+			$out .= "<p class='description'>" . $this->_("Upon acceptance an email will be sent to the presenting authors E-mail address. You can edit the default messages in the settings.") . "</p>";
+			}
+			$form = $this->modules->get('InputfieldForm');
+			$form->attr('action', './?id=' . $id);
+			$form->attr('method', 'post');
+
+			$field = $this->modules->get('InputfieldTextarea');
+			$field->attr('id+name', 'msg2authors');
+			$field->label("Message to authors");
+
+			$acceptMSG=$this->wire("sanitizer")->textarea($this->wire("pages")->get("/settings/")->acceptance);
+			$declineMSG=$this->wire("sanitizer")->textarea($this->wire("pages")->get("/settings/")->decline);
+
+			$field->prependMarkup("<p class='uk-margin-small'><a class='uk-button uk-button-default ' onclick='$(\"#msg2authors\").val(\"".$acceptMSG."\");'>Acceptance message</a> <a class='uk-button uk-button-default ' onclick='$(\"#msg2authors\").val(\"".$declineMSG."\");'>Decline message</span></a></p>");
+
+			$field->attr('value', $this->_(''));
+			$form->append($field);
+			if ($draft->parent->name=="submitted") {
+			$field = $this->modules->get('InputfieldSubmit');
+			$field->attr('id+name', 'accepted');
+			$field->attr('value', $this->_('Accept Submission'));
+			$form->append($field);
+
+			$field = $this->modules->get('InputfieldSubmit');
+			$field->attr('id+name', 'declined');
+			$field->attr('value', $this->_('Decline'));
+			$field->addClass('ui-priority-secondary');
+			$form->append($field);
+			}else{
+			$field = $this->modules->get('InputfieldSubmit');
+			$field->attr('id+name', 'sendmessage');
+			$field->attr('value', $this->_('Send Message'));
+			$form->append($field);
+			}
+			$out .= $form->render();
+			$out .= "</div>";
+		
+		$out .= "</div></div>";
+		
+
+		return $out;
+	}
+
+	public function install() {
+
+
+		$drafts = new Page();
+		$drafts->template = $this->templates->get("admin");
+		$drafts->parent = $this->pages->get($this->config->adminRootPageID);
+		$drafts->title = 'Manage Submissions';
+		$drafts->name = 'manage-submissions';
+		$drafts->process = $this;
+		$drafts->save();
+
+	}
+
+	public function uninstall() {
+		$p = $this->pages->get('template=admin, name=manage-submissions, include=all');
+		if ($p->id) $this->pages->delete($p, true); // Recursive delete
+	}
+
+
+}

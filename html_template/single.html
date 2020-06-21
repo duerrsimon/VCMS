@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VCMS</title>
+    <link rel="stylesheet" href="fonts/inter.css">
+    <link rel="stylesheet" href="css/tailwind.min.css">
+    <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.0.1/dist/alpine.js" defer></script>
+    <script src="http://localhost/pwdemo/wire/modules/Jquery/JqueryCore/JqueryCore.js"></script>
+    <script src='http://localhost/pwdemo/wire/modules/Fieldtype/FieldtypeComments/comments.min.js'></script>
+</head>
+<body>
+    <div>
+      <nav x-data="{ open: false }" @keydown.window.escape="open = false" class="bg-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="flex items-center justify-between h-16">
+            <div class="flex items-center">
+              <div class="flex-shrink-0">
+                <img class="h-8 w-8" src="img/logo.svg" alt="VCMS logo" />
+              </div>
+              <div class="hidden md:block">
+                <div class="ml-10 flex items-baseline">
+                  <a href="#" class=" px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700">Home</a>
+                  <a href="schedule.html" class="ml-4 px-3 py-2 rounded-md text-sm font-medium text-white bg-gray-900 focus:outline-none focus:text-white focus:bg-gray-700">Schedule</a>
+
+                  <a href="speakers.html" class="ml-4 px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700">Speakers</a>
+                  <a href="posters.html" class="ml-4 px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700">Posters</a>
+
+                  <a href="faq.html" class="ml-4 px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700">FAQ</a>
+                  <a href="about.html" class="ml-4 px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700">About</a>
+
+                </div>
+              </div>
+            </div>
+            <div class="hidden md:block">
+              <div class="ml-4 flex items-center md:ml-6">
+                  <div @click.away="open = false" class="ml-3 relative" x-data="{ open: false }">
+                      <div>
+                          <button @click="open = !open" class="p-1 border-2 border-transparent text-gray-400 rounded-full hover:text-white focus:outline-none focus:text-white focus:bg-gray-700" aria-label="Notifications" aria-haspopup="true" x-bind:aria-expanded="open">
+                              <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                              </svg>
+                            </button>
+                      </div>
+                      <div x-show="open" x-transition:enter="transition ease-out duration-100" x-transition:enter-start="transform opacity-0 scale-95" x-transition:enter-end="transform opacity-100 scale-100" x-transition:leave="transition ease-in duration-75" x-transition:leave-start="transform opacity-100 scale-100" x-transition:leave-end="transform opacity-0 scale-95" class="origin-top-right absolute right-0 mt-2 w-64 rounded-md shadow-lg z-50">
+                        <div class="rounded-md bg-white shadow-xs z-50">
+                          <!-- <p class="text-sm p-4">You have 0 comments</p> -->
+                          <div class="flex text-sm max-w-md bg-white shadow-lg  overflow-hidden">
+                              <div class="w-2 bg-green-500"></div>
+                              <div class="flex items-center px-2 py-3">
+                                 <div class="mx-3">
+                                  <h2 class="font-semibold text-gray-800">New Comment</h2>
+                                  <p class="text-gray-600">John Doe commented on your <a href="#" class="text-blue-500">Poster</a>.</p>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="flex text-sm max-w-md bg-white shadow-lg overflow-hidden">
+                              <div class="w-2 bg-blue-500"></div>
+                              <div class="flex items-center px-2 py-3">
+                                 <div class="mx-3">
+                                  <h2 class="font-semibold text-gray-800">New Like</h2>
+                                  <p class="text-gray-600">You have a new like on your <a href="#" class="text-blue-500">Poster</a>.</p>
+                                </div>
+                              </div>
+                            </div>
+                        </div>
+                      </div>
+                    </div>  
+               
+                <div @click.away="open = false" class="ml-3 relative" x-data="{ open: false }">
+                  <div>
+                    <button @click="open = !open" class="max-w-xs flex items-center text-sm rounded-full text-gray-400 rounded-full hover:text-white focus:outline-none focus:text-white" id="user-menu" aria-label="User menu" aria-haspopup="true" x-bind:aria-expanded="open">
+                     
+                      <svg class="svg-icon h-6 w-6 stroke-1 stroke-current" viewBox="0 0 20 20">
+                        <path fill="none" d="M10,10.9c2.373,0,4.303-1.932,4.303-4.306c0-2.372-1.93-4.302-4.303-4.302S5.696,4.223,5.696,6.594C5.696,8.969,7.627,10.9,10,10.9z M10,3.331c1.801,0,3.266,1.463,3.266,3.263c0,1.802-1.465,3.267-3.266,3.267c-1.8,0-3.265-1.465-3.265-3.267C6.735,4.794,8.2,3.331,10,3.331z"></path>
+                        <path fill="none" d="M10,12.503c-4.418,0-7.878,2.058-7.878,4.685c0,0.288,0.231,0.52,0.52,0.52c0.287,0,0.519-0.231,0.519-0.52c0-1.976,3.132-3.646,6.84-3.646c3.707,0,6.838,1.671,6.838,3.646c0,0.288,0.234,0.52,0.521,0.52s0.52-0.231,0.52-0.52C17.879,14.561,14.418,12.503,10,12.503z"></path>
+                      </svg>
+                    </button>
+                  </div>
+                  <div x-show="open" x-transition:enter="transition ease-out duration-100" x-transition:enter-start="transform opacity-0 scale-95" x-transition:enter-end="transform opacity-100 scale-100" x-transition:leave="transition ease-in duration-75" x-transition:leave-start="transform opacity-100 scale-100" x-transition:leave-end="transform opacity-0 scale-95" class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg z-50">
+                    <div class="py-1 rounded-md bg-white shadow-xs">
+                      <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Your Profile</a>
+                      <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Submissions</a>
+                      <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Sign out</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="-mr-2 flex md:hidden">
+              <button @click="open = !open" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:bg-gray-700 focus:text-white" x-bind:aria-label="open ? 'Close main menu' : 'Main menu'" x-bind:aria-expanded="open">
+                <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                  <path :class="{'hidden': open, 'inline-flex': !open }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                  <path :class="{'hidden': !open, 'inline-flex': open }" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div :class="{'block': open, 'hidden': !open}" class="hidden md:hidden">
+          <div class="px-2 pt-2 pb-3 sm:px-3">
+            <a href="index.html" class="mt-1 block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700">Home</a>
+            <a href="schedule.html" class="block px-3 py-2 rounded-md text-base font-medium text-white bg-gray-900 focus:outline-none focus:text-white focus:bg-gray-700">Schedule</a>
+            <a href="speakers.html" class="mt-1 block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700">Speakers</a>
+            <a href="posters.html" class="mt-1 block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700">Posters</a>
+            <a href="faq.html" class="mt-1 block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700">FAQ</a>
+            <a href="about.html" class="mt-1 block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700">About</a>
+          </div>
+          <div class="pt-4 pb-3 border-t border-gray-700">
+            <div class="flex items-center px-5">
+              <div class="flex-shrink-0">
+                <svg class="svg-icon h-10 w-10 stroke-1 stroke-current text-cool-gray-100" viewBox="0 0 20 20">
+                  <path fill="none" d="M10,10.9c2.373,0,4.303-1.932,4.303-4.306c0-2.372-1.93-4.302-4.303-4.302S5.696,4.223,5.696,6.594C5.696,8.969,7.627,10.9,10,10.9z M10,3.331c1.801,0,3.266,1.463,3.266,3.263c0,1.802-1.465,3.267-3.266,3.267c-1.8,0-3.265-1.465-3.265-3.267C6.735,4.794,8.2,3.331,10,3.331z"></path>
+                  <path fill="none" d="M10,12.503c-4.418,0-7.878,2.058-7.878,4.685c0,0.288,0.231,0.52,0.52,0.52c0.287,0,0.519-0.231,0.519-0.52c0-1.976,3.132-3.646,6.84-3.646c3.707,0,6.838,1.671,6.838,3.646c0,0.288,0.234,0.52,0.521,0.52s0.52-0.231,0.52-0.52C17.879,14.561,14.418,12.503,10,12.503z"></path>
+                </svg>
+              </div>
+              <div class="ml-3">
+                <div class="text-base font-medium leading-none text-white">John Doe</div>
+                <div class="mt-1 text-sm font-medium leading-none text-gray-400">doe@openuni.com</div>
+              </div>
+            </div>
+            <div class="mt-3 px-2" role="menu" aria-orientation="vertical" aria-labelledby="user-menu" role="menuitem">
+              <a href="#" class="block px-3 py-2 rounded-md text-base font-medium text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700" role="menuitem">Your Profile</a>
+              <a href="#" class="mt-1 block px-3 py-2 rounded-md text-base font-medium text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700" role="menuitem">Submissions</a>
+              <a href="#" class="mt-1 block px-3 py-2 rounded-md text-base font-medium text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700" role="menuitem">Sign out</a>
+            </div>
+          </div>
+        </div>
+      </nav>
+        <header class="bg-white">
+          <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+            <h1 class="text-xl font-bold leading-tight text-gray-900">
+              Schedule
+            </h1>
+            <nav class="text-black font-bold mt-1" aria-label="Breadcrumb">
+              <ol class="list-none p-0 inline-flex">
+                <li class="flex items-center">
+                  <a href="schedule.html" class="text-red-800">15.06.2020</a>
+                  <svg class="fill-current w-3 h-3 mx-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"/></svg>
+                </li>
+                <li>
+                  <a href="#" class="text-gray-500" aria-current="page">Quantum Machine Learning</a>
+                </li>
+              </ol>
+            </nav>
+          </div>
+        </header>
+    </div>
+        <main>
+            <div class="bg-gray-200 mt-2 pb-8">
+
+          <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8 flex flex-no-wrap align-top">
+           
+            
+            <div class="w-1/2">
+              <div class="video-responsive mb-4 sm:rounded-lg">
+                <iframe width="1353" height="480" src="https://www.youtube.com/embed/ibELoCSf3cE" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+              </div>
+              <div class="bg-white shadow overflow-hidden sm:rounded-lg relative flex-grow-0">
+                <div class="px-4 py-5 border-b border-gray-200 sm:px-6">
+                  <h3 class="text-lg leading-6 font-medium text-gray-900">
+                    Quantum Machine Learning
+                  </h3>
+                  <p class="mt-1 max-w-2xl text-sm leading-5 text-gray-500">
+                    Session information
+                  </p>
+                </div>
+                <div>
+                  <dl>
+                    <div class="bg-gray-100 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                      <dt class="text-sm leading-5 font-medium text-gray-500">
+                        Presenter
+                      </dt>
+                      <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
+                        Margot Foster
+                      </dd>
+                    </div>
+                    <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                      <dt class="text-sm leading-5 font-medium text-gray-500">
+                        Date and Time
+                      </dt>
+                      <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
+                        15.06.2020, 17.00 - 17.45 PST
+                      </dd>
+                    </div>
+                    <div class="bg-gray-100 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                        <dt class="text-sm leading-5 font-medium text-gray-500">
+                          Link
+                        </dt>
+                        <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
+                          <a href="" class="text-red-800 hover:text-gray-800"><img src="img/zoom.svg" class="inline h-4 w-4"> zoom.us/1293891239</a>
+                        </dd>
+                      </div>
+                    <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                      <dt class="text-sm leading-5 font-medium text-gray-500">
+                        Affiliation
+                      </dt>
+                      <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
+                        Ecole Polytechnique Federale de Lausanne, Switzerland
+                      </dd>
+                    </div>
+                    <div class="bg-gray-100 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                      <dt class="text-sm leading-5 font-medium text-gray-500">
+                        Attachments
+                      </dt>
+                      <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
+                        <ul class="border border-gray-200 rounded-md">
+                          <li class="border-t border-gray-200 pl-3 pr-4 py-3 flex items-center justify-between text-sm leading-5">
+                            <div class="w-0 flex-1 flex items-center">
+                              <svg class="flex-shrink-0 h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M8 4a3 3 0 00-3 3v4a5 5 0 0010 0V7a1 1 0 112 0v4a7 7 0 11-14 0V7a5 5 0 0110 0v4a3 3 0 11-6 0V7a1 1 0 012 0v4a1 1 0 102 0V7a3 3 0 00-3-3z" clip-rule="evenodd"/>
+                              </svg>
+                              <span class="ml-2 flex-1 w-0 truncate">
+                                slides.pdf
+                              </span>
+                            </div>
+                            <div class="ml-4 flex-shrink-0">
+                              <a href="#" class="font-medium text-indigo-600 hover:text-indigo-500 transition duration-150 ease-in-out">
+                                Download
+                              </a>
+                            </div>
+                          </li>
+                        </ul>
+                      </dd>
+                    </div>
+                  </dl>
+                </div>
+              </div>
+            </div>
+
+              <div class="w-1/2">
+                <div class="bg-white shadow overflow-hidden mx-2 sm:rounded-lg mb-4">
+                <div class="px-4 py-5 border-b border-gray-200 sm:px-6">
+                    <h3 class="text-lg leading-6 font-medium text-gray-900">
+                      Abstract
+                    </h3>
+                </div>
+                <div class="px-4 py-5" x-data="{ open: false }">
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
+                    
+                    <div  x-show="open"
+                    x-transition:enter-start="opacity-0 scale-90"
+                    x-transition:enter-end="opacity-100 scale-100"
+                    x-transition:leave="ease-in transition-slow"
+                    x-transition:leave-start="opacity-100 scale-100"
+                    x-transition:leave-end="opacity-0 scale-90"                    
+            
+                    @click.away="open = false"> <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua [1]. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum [2]. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum [3]</p>
+                    
+                    <h3 class="font-medium text-cool-gray-700 mt-4 mb-1">Key References</h3>
+                    <ul>
+                    <li>[1] A. Poplak, B. Rado, Chem. Rev.&nbsp;<strong>2018</strong>, 110, 3877-3923.</li>
+                    <li>[2] G. Frenk, M. Herm, D. M. Anoda,Chem. Soc. Rev.&nbsp;<strong>2012</strong>, 41, 1129-1144.</li>
+                    <li>[3] D. U. Muli, I. G. Power, Nat. Rev. Chem.&nbsp;<strong>2017</strong>, 1.</li>
+                    </ul>
+                    </div>
+                    <a 
+                @click="open = !open"
+                class="font-bold cursor-pointer hover:text-red-800 focus:text-red-800 focus:outline-none"><svg class="svg-icon w-4 h-4 inline-block" viewBox="0 0 20 20">
+                <path d="M10,2.172c-4.324,0-7.828,3.504-7.828,7.828S5.676,17.828,10,17.828c4.324,0,7.828-3.504,7.828-7.828S14.324,2.172,10,2.172M10,17.004c-3.863,0-7.004-3.141-7.004-7.003S6.137,2.997,10,2.997c3.862,0,7.004,3.141,7.004,7.004S13.862,17.004,10,17.004M10,8.559c-0.795,0-1.442,0.646-1.442,1.442S9.205,11.443,10,11.443s1.441-0.647,1.441-1.443S10.795,8.559,10,8.559 M10,10.619c-0.34,0-0.618-0.278-0.618-0.618S9.66,9.382,10,9.382S10.618,9.661,10.618,10S10.34,10.619,10,10.619 M14.12,8.559c-0.795,0-1.442,0.646-1.442,1.442s0.647,1.443,1.442,1.443s1.442-0.647,1.442-1.443S14.915,8.559,14.12,8.559 M14.12,10.619c-0.34,0-0.618-0.278-0.618-0.618s0.278-0.618,0.618-0.618S14.738,9.661,14.738,10S14.46,10.619,14.12,10.619 M5.88,8.559c-0.795,0-1.442,0.646-1.442,1.442s0.646,1.443,1.442,1.443S7.322,10.796,7.322,10S6.675,8.559,5.88,8.559 M5.88,10.619c-0.34,0-0.618-0.278-0.618-0.618S5.54,9.382,5.88,9.382S6.498,9.661,6.498,10S6.22,10.619,5.88,10.619"></path>
+              </svg> Read <span x-show="!open">more</span> <span x-show="open">less</span>
+                  </a>
+                </div>
+              </div>
+              <div class="bg-white shadow overflow-hidden mx-2 sm:rounded-lg">
+                <div class="px-4 py-5 border-b border-gray-200 sm:px-6">
+                  <h3 class="text-lg leading-6 font-medium text-gray-900">
+                    Comments
+                  </h3>
+              </div>
+              <div class="p-4">
+              <ul class='CommentList CommentListThread'>
+                  <li id='Comment6' class='CommentListItem CommentHasReplies' data-comment='6'>
+                    <p class='CommentHeader'><span class='CommentCite'>Lasse Mundzu</span> <small class='CommentCreated'>2 hours ago</small> <span class='CommentVotes'><a class='CommentActionUpvote' title='Like this comment' data-url='/pwdemo/blog/phase-data-extended-transaction/?comment_success=upvote&amp;comment_id=6&amp;field_id=99#Comment6' href='#Comment6'>&uarr;<small class='CommentUpvoteCnt'>1</small></a></span> </p>
+                    <div class='CommentText'>
+                      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. </p>
+                    </div>
+                    <div class='CommentFooter'>
+                      <p class='CommentAction'>
+                        <a class='CommentActionReply' data-comment-id='6' href='#Comment6'>
+                          <svg class="svg-icon w-4 h-4 inline" viewBox="0 0 20 20">
+                            <path d="M3.24,7.51c-0.146,0.142-0.146,0.381,0,0.523l5.199,5.193c0.234,0.238,0.633,0.064,0.633-0.262v-2.634c0.105-0.007,0.212-0.011,0.321-0.011c2.373,0,4.302,1.91,4.302,4.258c0,0.957-0.33,1.809-1.008,2.602c-0.259,0.307,0.084,0.762,0.451,0.572c2.336-1.195,3.73-3.408,3.73-5.924c0-3.741-3.103-6.783-6.916-6.783c-0.307,0-0.615,0.028-0.881,0.063V2.575c0-0.327-0.398-0.5-0.633-0.261L3.24,7.51 M4.027,7.771l4.301-4.3v2.073c0,0.232,0.21,0.409,0.441,0.366c0.298-0.056,0.746-0.123,1.184-0.123c3.402,0,6.172,2.709,6.172,6.041c0,1.695-0.718,3.24-1.979,4.352c0.193-0.51,0.293-1.045,0.293-1.602c0-2.76-2.266-5-5.046-5c-0.256,0-0.528,0.018-0.747,0.05C8.465,9.653,8.328,9.81,8.328,9.995v2.074L4.027,7.771z"></path>
+                          </svg>
+
+                          Reply</a> 
+                      </p>
+                    </div><ul class='CommentList CommentListThread CommentListReplies'>
+                  <li id='Comment7' class='CommentListItem CommentHasReplies' data-comment='7'>
+                    <p class='CommentHeader'><span class='CommentCite'>Andreas Pätzold</span> <small class='CommentCreated'>2 hours ago</small> <span class='CommentVotes'><a class='CommentActionUpvote' title='Like this comment' data-url='/pwdemo/blog/phase-data-extended-transaction/?comment_success=upvote&amp;comment_id=7&amp;field_id=99#Comment7' href='#Comment7'>&uarr;<small class='CommentUpvoteCnt'>1</small></a></span> </p>
+                    <div class='CommentText'>
+                      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. </p>
+                    </div>
+                    <div class='CommentFooter'>
+                      <p class='CommentAction'>
+                        <a class='CommentActionReply' data-comment-id='7' href='#Comment7'>
+                          <svg class="svg-icon w-4 h-4 inline" viewBox="0 0 20 20">
+                            <path d="M3.24,7.51c-0.146,0.142-0.146,0.381,0,0.523l5.199,5.193c0.234,0.238,0.633,0.064,0.633-0.262v-2.634c0.105-0.007,0.212-0.011,0.321-0.011c2.373,0,4.302,1.91,4.302,4.258c0,0.957-0.33,1.809-1.008,2.602c-0.259,0.307,0.084,0.762,0.451,0.572c2.336-1.195,3.73-3.408,3.73-5.924c0-3.741-3.103-6.783-6.916-6.783c-0.307,0-0.615,0.028-0.881,0.063V2.575c0-0.327-0.398-0.5-0.633-0.261L3.24,7.51 M4.027,7.771l4.301-4.3v2.073c0,0.232,0.21,0.409,0.441,0.366c0.298-0.056,0.746-0.123,1.184-0.123c3.402,0,6.172,2.709,6.172,6.041c0,1.695-0.718,3.24-1.979,4.352c0.193-0.51,0.293-1.045,0.293-1.602c0-2.76-2.266-5-5.046-5c-0.256,0-0.528,0.018-0.747,0.05C8.465,9.653,8.328,9.81,8.328,9.995v2.074L4.027,7.771z"></path>
+                          </svg>
+                          Reply</a> 
+                      </p>
+                    </div><ul class='CommentList CommentListThread CommentListReplies'>
+                  <li id='Comment8' class='CommentListItem' data-comment='8'>
+                    <p class='CommentHeader'><span class='CommentCite'>Raya Chernovic</span> <small class='CommentCreated'>2 hours ago</small> <span class='CommentVotes'><a class='CommentActionUpvote' title='Like this comment' data-url='/pwdemo/blog/phase-data-extended-transaction/?comment_success=upvote&amp;comment_id=8&amp;field_id=99#Comment8' href='#Comment8'>&uarr;<small class='CommentUpvoteCnt'>0</small></a></span> </p>
+                    <div class='CommentText'>
+                      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.. </p>
+                    </div>
+                    <div class='CommentFooter'></div>
+                  </li>
+                </ul>
+                  </li>
+                </ul>
+                  </li>
+                </ul>
+              </div>
+                <div id='CommentForm' class='CommentForm_new'>
+                  <div class="px-4 py-5 border-b border-gray-200 sm:px-6">
+                    <h3 class="text-lg leading-6 font-medium text-gray-900">
+                      Post Comment
+                    </h3>
+                </div>
+                <div class="p-4">
+                <!-- <div id='CommentPostNote'><p class='success'><strong>Thank you, your submission has been saved.</strong></p></div> -->
+                <form class='CommentForm CommentFormThread' action='./#CommentForm' method='post'>
+                  <p class='CommentFormCite CommentForm_cite'>
+                    <label>
+                      <span>Your Name</span> 
+                      <input type='text' name='cite' class='required' required='required' value='admin' maxlength='128' />
+                    </label> 
+                  </p>
+                  <p class='CommentFormEmail CommentForm_email'>
+                    <label>
+                      <span>Your E-Mail</span> 
+                      <input type='email' name='email' class='required email' required='required' value='exampleemail@uni.com' maxlength='255' />
+                    </label>
+                  </p>
+                  <p class='CommentFormText CommentForm_text'>
+                    <label>
+                      <span>Comments</span>
+                      <textarea name='text' class='required' required='required' rows='5' cols='50'></textarea>
+                    </label>
+                  </p>
+                  <p class='CommentFormSubmit CommentForm_submit'>
+                    <button type='submit' class='' name='CommentForm_submit' value='1'>Submit</button>
+                    <input type='hidden' name='page_id' value='1015' />
+                    <input type='hidden' class='CommentFormParent' name='parent_id' value='0' />
+                  </p>
+                </form>
+                </div>
+              </div>                    
+              </div>
+            </div>
+        </div>
+        </main>
+        <div class="bg-gray-300 p-8">
+        <div class="container mx-auto">
+            <div class="sm:flex mb-4">
+          <div class="sm:w-1/2 h-auto">
+              <div class="text-base font-bold mb-2">Organizing commitee</div>
+              <ul class="list-reset leading-normal">
+                  <li class="hover:text-orange text-gray-600">Olaf Rymsberg</li>
+                  <li class="hover:text-orange text-gray-600">Diana Feinholm</li>
+                  <li class="hover:text-orange text-gray-600">Wei Li Chan</li>
+                  
+              </ul>
+          </div>
+         
+          <div class="sm:w-1/2 h-auto sm:mt-0 mt-8">
+            <div class="text-base font-bold mb-2">Legal information</div>
+            <ul class="list-reset leading-normal">
+                <li class="hover:text-orange text-gray-600">Privacy Statement</li>
+                <li class="hover:text-orange text-gray-600">Impressum</li>
+                                
+            </ul>
+        </div>
+        <div class="sm:w-1/2 h-auto sm:mt-0 mt-8">
+            <div class="text-base font-bold mb-2">Support</div>
+            <ul class="list-reset leading-normal">
+                <li class="hover:text-orange text-gray-600">Technical support</li>
+                <li class="hover:text-orange text-gray-600">Contact the organizers</li>
+                                
+            </ul>
+        </div>
+            <div class="sm:w-1/4 sm:mt-0 mt-8 h-auto">
+                <div class="text-base font-bold mb-2">Newsletter</div>
+                <p class="text-gray-600 leading-normal">Put yourself on the mailing list. </p>
+                <div class="mt-4 flex">
+                    <input type="text" class="p-2 border border-gray-200 round text-gray-700 text-sm h-auto" placeholder="Your email address">
+                    <button class="bg-gray-800 text-white rounded-sm h-auto text-xs p-3">Subscribe</button>
+                </div>
+            </div>
+        
+        </div>
+        </div> 
+    </div>
+</body>
+</html>
