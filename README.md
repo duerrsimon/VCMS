@@ -30,9 +30,10 @@ The current Frontend User Interface can be viewed here:
 [Link to Demo page](https://vcms.simonduerr.eu)
 
 The backend can be previewed here: 
-[Login](https://vcms.simonduerr.eu/processwire)
-Name: editor
-Password vcmstest2020
+
+- https://vcms.simonduerr.eu/processwire
+- Name: editor
+- Password vcmstest2020
 
 # Installation
 
